@@ -25,7 +25,7 @@ The old graph-and-source format used 84,570 meaning glyphs and 609,170 square mo
 
 This compares interpreted meaning with the old representation that also retained exact wording. It is not lossless compression of identical text data, a measurement of semantic entropy, or a matched recognition-error comparison with English/Mandarin typography. The original scoped-specimen research measurements remain unchanged.
 
-Model error is distinct from encoding error. Inspection has found wrong biological classifications and an incorrect analysis of the idiom “take flight.” Three model outputs needed completed closing parentheses, with those repairs recorded. Native compilation does not repair semantic errors or infer omitted content. The compact extension retains the model’s representation, which may itself be incomplete or wrong.
+Model error is distinct from encoding error. Inspection has found wrong biological classifications and an incorrect analysis of the idiom “take flight.” French realization of the compact flight graph also chose an indefinite article despite its encoded definite flag; the literal reading still exposes the retained distinction. Three model outputs needed completed closing parentheses, with those repairs recorded. Native compilation does not repair semantic errors or infer omitted content. The compact extension retains the model’s representation, which may itself be incomplete or wrong.
 
 ## Browser, exports, and deployment
 

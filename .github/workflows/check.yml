@@ -12,6 +12,9 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+        env:
+          # Native checks use the bundled CPU runtime; no CUDA download is needed.
+          ONNXRUNTIME_NODE_INSTALL: skip
       - run: npm test
       - run: node scripts/prepare-model.mjs --native
       - run: node scripts/check-meaning-model.mjs

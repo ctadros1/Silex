@@ -1,0 +1,1308 @@
+[
+  {
+    "id": "01",
+    "group": "core",
+    "english": "I see you.",
+    "mandarin": "我看见你。",
+    "notation": "(SEE ME YOU)",
+    "note": "SEE is evaluated in the utterance context. No additional tense or evidential claim is supplied.",
+    "ast": {
+      "op": "SEE",
+      "args": [
+        {
+          "op": "ME",
+          "args": []
+        },
+        {
+          "op": "YOU",
+          "args": []
+        }
+      ]
+    },
+    "tokens": [
+      43,
+      30,
+      31
+    ],
+    "body_glyphs": 3,
+    "body_bits": 18,
+    "packet_glyphs": 7,
+    "frame_modules": [
+      12,
+      10
+    ],
+    "frame_padding_glyphs": 1,
+    "silex_feature_px2": 480,
+    "silex_equal_em_px2": 13653.333333333332,
+    "english_px2": 6864,
+    "mandarin_px2": 8064,
+    "english_lines": [
+      "I see",
+      "you."
+    ],
+    "mandarin_lines": [
+      "我看见你。"
+    ],
+    "english_feature_ratio": 14.3,
+    "mandarin_feature_ratio": 16.8,
+    "english_equal_em_ratio": 0.5027343750000001,
+    "mandarin_equal_em_ratio": 0.5906250000000001
+  },
+  {
+    "id": "02",
+    "group": "core",
+    "english": "I do not see you.",
+    "mandarin": "我没看见你。",
+    "notation": "(NOT (SEE ME YOU))",
+    "note": "Negation scopes over the whole seeing proposition. The Chinese gloss is intended with the same situational reading.",
+    "ast": {
+      "op": "NOT",
+      "args": [
+        {
+          "op": "SEE",
+          "args": [
+            {
+              "op": "ME",
+              "args": []
+            },
+            {
+              "op": "YOU",
+              "args": []
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      2,
+      43,
+      30,
+      31
+    ],
+    "body_glyphs": 4,
+    "body_bits": 24,
+    "packet_glyphs": 8,
+    "frame_modules": [
+      12,
+      10
+    ],
+    "frame_padding_glyphs": 0,
+    "silex_feature_px2": 480,
+    "silex_equal_em_px2": 13653.333333333332,
+    "english_px2": 11440,
+    "mandarin_px2": 9152,
+    "english_lines": [
+      "I do not",
+      "see you."
+    ],
+    "mandarin_lines": [
+      "我没看",
+      "见你。"
+    ],
+    "english_feature_ratio": 23.833333333333332,
+    "mandarin_feature_ratio": 19.066666666666666,
+    "english_equal_em_ratio": 0.8378906250000001,
+    "mandarin_equal_em_ratio": 0.6703125000000001
+  },
+  {
+    "id": "03",
+    "group": "core",
+    "english": "I see the red bird.",
+    "mandarin": "我看见那只红鸟。",
+    "notation": "(SEE ME (THE (AND (BIRD V0) (RED V0))))",
+    "note": "THE selects the unique red bird in the explicitly shared contextual domain; failure of uniqueness is a presupposition failure.",
+    "ast": {
+      "op": "SEE",
+      "args": [
+        {
+          "op": "ME",
+          "args": []
+        },
+        {
+          "op": "THE",
+          "args": [
+            {
+              "op": "AND",
+              "args": [
+                {
+                  "op": "BIRD",
+                  "args": [
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                },
+                {
+                  "op": "RED",
+                  "args": [
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      43,
+      30,
+      25,
+      3,
+      41,
+      27,
+      42,
+      27
+    ],
+    "body_glyphs": 8,
+    "body_bits": 48,
+    "packet_glyphs": 12,
+    "frame_modules": [
+      12,
+      13
+    ],
+    "frame_padding_glyphs": 0,
+    "silex_feature_px2": 624,
+    "silex_equal_em_px2": 17749.333333333332,
+    "english_px2": 11616,
+    "mandarin_px2": 11968,
+    "english_lines": [
+      "I see the",
+      "red bird."
+    ],
+    "mandarin_lines": [
+      "我看见那",
+      "只红鸟。"
+    ],
+    "english_feature_ratio": 18.615384615384617,
+    "mandarin_feature_ratio": 19.17948717948718,
+    "english_equal_em_ratio": 0.6544471153846154,
+    "mandarin_equal_em_ratio": 0.6742788461538461
+  },
+  {
+    "id": "04",
+    "group": "core",
+    "english": "Every child sees a bird.",
+    "mandarin": "每个孩子都看见一只鸟。",
+    "notation": "(ALL (CHILD V0) (SOME (BIRD V0) (SEE V1 V0)))",
+    "note": "Chosen reading: for every child, there is a possibly different bird that child sees. Existence of children is not asserted.",
+    "ast": {
+      "op": "ALL",
+      "args": [
+        {
+          "op": "CHILD",
+          "args": [
+            {
+              "op": "V0",
+              "args": []
+            }
+          ]
+        },
+        {
+          "op": "SOME",
+          "args": [
+            {
+              "op": "BIRD",
+              "args": [
+                {
+                  "op": "V0",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "op": "SEE",
+              "args": [
+                {
+                  "op": "V1",
+                  "args": []
+                },
+                {
+                  "op": "V0",
+                  "args": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      6,
+      40,
+      27,
+      7,
+      41,
+      27,
+      43,
+      28,
+      27
+    ],
+    "body_glyphs": 9,
+    "body_bits": 54,
+    "packet_glyphs": 13,
+    "frame_modules": [
+      18,
+      10
+    ],
+    "frame_padding_glyphs": 1,
+    "silex_feature_px2": 720,
+    "silex_equal_em_px2": 20480.0,
+    "english_px2": 15400,
+    "mandarin_px2": 17280,
+    "english_lines": [
+      "Every child",
+      "sees a bird."
+    ],
+    "mandarin_lines": [
+      "每个孩子都看见一只鸟。"
+    ],
+    "english_feature_ratio": 21.38888888888889,
+    "mandarin_feature_ratio": 24.0,
+    "english_equal_em_ratio": 0.751953125,
+    "mandarin_equal_em_ratio": 0.84375
+  },
+  {
+    "id": "05",
+    "group": "core",
+    "english": "There is a bird that every child sees.",
+    "mandarin": "有一只鸟，每个孩子都看见它。",
+    "notation": "(SOME (BIRD V0) (ALL (CHILD V0) (SEE V0 V1)))",
+    "note": "One bird is outside the child quantifier. This differs from example 04 even when the glyph counts coincide.",
+    "ast": {
+      "op": "SOME",
+      "args": [
+        {
+          "op": "BIRD",
+          "args": [
+            {
+              "op": "V0",
+              "args": []
+            }
+          ]
+        },
+        {
+          "op": "ALL",
+          "args": [
+            {
+              "op": "CHILD",
+              "args": [
+                {
+                  "op": "V0",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "op": "SEE",
+              "args": [
+                {
+                  "op": "V0",
+                  "args": []
+                },
+                {
+                  "op": "V1",
+                  "args": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      7,
+      41,
+      27,
+      6,
+      40,
+      27,
+      43,
+      27,
+      28
+    ],
+    "body_glyphs": 9,
+    "body_bits": 54,
+    "packet_glyphs": 13,
+    "frame_modules": [
+      18,
+      10
+    ],
+    "frame_padding_glyphs": 1,
+    "silex_feature_px2": 720,
+    "silex_equal_em_px2": 20480.0,
+    "english_px2": 24464,
+    "mandarin_px2": 20416,
+    "english_lines": [
+      "There is a bird that",
+      "every child sees."
+    ],
+    "mandarin_lines": [
+      "有一只鸟，每个",
+      "孩子都看见它。"
+    ],
+    "english_feature_ratio": 33.977777777777774,
+    "mandarin_feature_ratio": 28.355555555555554,
+    "english_equal_em_ratio": 1.19453125,
+    "mandarin_equal_em_ratio": 0.996875
+  },
+  {
+    "id": "06",
+    "group": "core",
+    "english": "If every child reads a book, I will help you.",
+    "mandarin": "如果每个孩子都读一本书，我就会帮助你。",
+    "notation": "(IF (ALL (CHILD V0) (SOME (BOOK V0) (READ V1 V0))) (FUTURE (HELP ME YOU)))",
+    "note": "IF is material implication, with present-context reading in the antecedent and a future-context consequent. It is not a causal or counterfactual conditional.",
+    "ast": {
+      "op": "IF",
+      "args": [
+        {
+          "op": "ALL",
+          "args": [
+            {
+              "op": "CHILD",
+              "args": [
+                {
+                  "op": "V0",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "op": "SOME",
+              "args": [
+                {
+                  "op": "BOOK",
+                  "args": [
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                },
+                {
+                  "op": "READ",
+                  "args": [
+                    {
+                      "op": "V1",
+                      "args": []
+                    },
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "op": "FUTURE",
+          "args": [
+            {
+              "op": "HELP",
+              "args": [
+                {
+                  "op": "ME",
+                  "args": []
+                },
+                {
+                  "op": "YOU",
+                  "args": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      5,
+      6,
+      40,
+      27,
+      7,
+      47,
+      27,
+      48,
+      28,
+      27,
+      34,
+      53,
+      30,
+      31
+    ],
+    "body_glyphs": 14,
+    "body_bits": 84,
+    "packet_glyphs": 18,
+    "frame_modules": [
+      16,
+      13
+    ],
+    "frame_padding_glyphs": 0,
+    "silex_feature_px2": 832,
+    "silex_equal_em_px2": 23665.777777777777,
+    "english_px2": 26880,
+    "mandarin_px2": 28224,
+    "english_lines": [
+      "If every child",
+      "reads a book,",
+      "I will help you."
+    ],
+    "mandarin_lines": [
+      "如果每个孩",
+      "子都读一本",
+      "书，我就会",
+      "帮助你。"
+    ],
+    "english_feature_ratio": 32.30769230769231,
+    "mandarin_feature_ratio": 33.92307692307692,
+    "english_equal_em_ratio": 1.1358173076923077,
+    "mandarin_equal_em_ratio": 1.1926081730769231
+  },
+  {
+    "id": "07",
+    "group": "core",
+    "english": "You believe that I know that every scientist lives in a city.",
+    "mandarin": "你相信我知道每位科学家都住在一座城市里。",
+    "notation": "(BELIEVE YOU (KNOW ME (ALL (SCIENTIST V0) (SOME (CITY V0) (LIVE V1 V0)))))",
+    "note": "The scientist and city quantifiers are inside both attitude operators, so their domains are evaluated there.",
+    "ast": {
+      "op": "BELIEVE",
+      "args": [
+        {
+          "op": "YOU",
+          "args": []
+        },
+        {
+          "op": "KNOW",
+          "args": [
+            {
+              "op": "ME",
+              "args": []
+            },
+            {
+              "op": "ALL",
+              "args": [
+                {
+                  "op": "SCIENTIST",
+                  "args": [
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                },
+                {
+                  "op": "SOME",
+                  "args": [
+                    {
+                      "op": "CITY",
+                      "args": [
+                        {
+                          "op": "V0",
+                          "args": []
+                        }
+                      ]
+                    },
+                    {
+                      "op": "LIVE",
+                      "args": [
+                        {
+                          "op": "V1",
+                          "args": []
+                        },
+                        {
+                          "op": "V0",
+                          "args": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      15,
+      31,
+      14,
+      30,
+      6,
+      50,
+      27,
+      7,
+      51,
+      27,
+      52,
+      28,
+      27
+    ],
+    "body_glyphs": 13,
+    "body_bits": 78,
+    "packet_glyphs": 17,
+    "frame_modules": [
+      16,
+      13
+    ],
+    "frame_padding_glyphs": 1,
+    "silex_feature_px2": 832,
+    "silex_equal_em_px2": 23665.777777777777,
+    "english_px2": 36256,
+    "mandarin_px2": 28224,
+    "english_lines": [
+      "You believe that I know that",
+      "every scientist lives in a city."
+    ],
+    "mandarin_lines": [
+      "你相信我知",
+      "道每位科学",
+      "家都住在一",
+      "座城市里。"
+    ],
+    "english_feature_ratio": 43.57692307692308,
+    "mandarin_feature_ratio": 33.92307692307692,
+    "english_equal_em_ratio": 1.5320012019230769,
+    "mandarin_equal_em_ratio": 1.1926081730769231
+  },
+  {
+    "id": "08",
+    "group": "core",
+    "english": "Every scientist believes that every machine they build might solve every problem.",
+    "mandarin": "每位科学家都相信，自己造的每台机器也许能解决所有问题。",
+    "notation": "(ALL (SCIENTIST V0) (BELIEVE V0 (ALL (AND (MACHINE V0) (BUILD V1 V0)) (POSSIBLE (ALL (PROBLEM V0) (SOLVE V1 V0))))))",
+    "note": "Chosen scope: an actual scientist is fixed outside belief; inside belief, each machine has a possible world in which it solves all problems. This does not mean separately possible success for each problem.",
+    "ast": {
+      "op": "ALL",
+      "args": [
+        {
+          "op": "SCIENTIST",
+          "args": [
+            {
+              "op": "V0",
+              "args": []
+            }
+          ]
+        },
+        {
+          "op": "BELIEVE",
+          "args": [
+            {
+              "op": "V0",
+              "args": []
+            },
+            {
+              "op": "ALL",
+              "args": [
+                {
+                  "op": "AND",
+                  "args": [
+                    {
+                      "op": "MACHINE",
+                      "args": [
+                        {
+                          "op": "V0",
+                          "args": []
+                        }
+                      ]
+                    },
+                    {
+                      "op": "BUILD",
+                      "args": [
+                        {
+                          "op": "V1",
+                          "args": []
+                        },
+                        {
+                          "op": "V0",
+                          "args": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "op": "POSSIBLE",
+                  "args": [
+                    {
+                      "op": "ALL",
+                      "args": [
+                        {
+                          "op": "PROBLEM",
+                          "args": [
+                            {
+                              "op": "V0",
+                              "args": []
+                            }
+                          ]
+                        },
+                        {
+                          "op": "SOLVE",
+                          "args": [
+                            {
+                              "op": "V1",
+                              "args": []
+                            },
+                            {
+                              "op": "V0",
+                              "args": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      6,
+      50,
+      27,
+      15,
+      27,
+      6,
+      3,
+      56,
+      27,
+      49,
+      28,
+      27,
+      35,
+      6,
+      58,
+      27,
+      57,
+      28,
+      27
+    ],
+    "body_glyphs": 19,
+    "body_bits": 114,
+    "packet_glyphs": 23,
+    "frame_modules": [
+      16,
+      16
+    ],
+    "frame_padding_glyphs": 1,
+    "silex_feature_px2": 1024,
+    "silex_equal_em_px2": 29127.11111111111,
+    "english_px2": 51840,
+    "mandarin_px2": 37888,
+    "english_lines": [
+      "Every scientist believes that",
+      "every machine they build",
+      "might solve every problem."
+    ],
+    "mandarin_lines": [
+      "每位科学家都相信，",
+      "自己造的每台机器也",
+      "许能解决所有问题。"
+    ],
+    "english_feature_ratio": 50.625,
+    "mandarin_feature_ratio": 37.0,
+    "english_equal_em_ratio": 1.77978515625,
+    "mandarin_equal_em_ratio": 1.30078125
+  },
+  {
+    "id": "09",
+    "group": "core",
+    "english": "If every child believes that someone loves them, then I know that you will help every child who reads a book.",
+    "mandarin": "如果每个孩子都相信有人爱自己，那么我知道你将帮助每个读书的孩子。",
+    "notation": "(IF (ALL (CHILD V0) (BELIEVE V0 (SOME (PERSON V0) (LOVE V0 V1)))) (KNOW ME (FUTURE (ALL (AND (CHILD V0) (SOME (BOOK V0) (READ V1 V0))) (HELP YOU V0)))))",
+    "note": "Someone means a person. The relative-clause restriction and help proposition are inside FUTURE; the child domains can differ between the two branches.",
+    "ast": {
+      "op": "IF",
+      "args": [
+        {
+          "op": "ALL",
+          "args": [
+            {
+              "op": "CHILD",
+              "args": [
+                {
+                  "op": "V0",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "op": "BELIEVE",
+              "args": [
+                {
+                  "op": "V0",
+                  "args": []
+                },
+                {
+                  "op": "SOME",
+                  "args": [
+                    {
+                      "op": "PERSON",
+                      "args": [
+                        {
+                          "op": "V0",
+                          "args": []
+                        }
+                      ]
+                    },
+                    {
+                      "op": "LOVE",
+                      "args": [
+                        {
+                          "op": "V0",
+                          "args": []
+                        },
+                        {
+                          "op": "V1",
+                          "args": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "op": "KNOW",
+          "args": [
+            {
+              "op": "ME",
+              "args": []
+            },
+            {
+              "op": "FUTURE",
+              "args": [
+                {
+                  "op": "ALL",
+                  "args": [
+                    {
+                      "op": "AND",
+                      "args": [
+                        {
+                          "op": "CHILD",
+                          "args": [
+                            {
+                              "op": "V0",
+                              "args": []
+                            }
+                          ]
+                        },
+                        {
+                          "op": "SOME",
+                          "args": [
+                            {
+                              "op": "BOOK",
+                              "args": [
+                                {
+                                  "op": "V0",
+                                  "args": []
+                                }
+                              ]
+                            },
+                            {
+                              "op": "READ",
+                              "args": [
+                                {
+                                  "op": "V1",
+                                  "args": []
+                                },
+                                {
+                                  "op": "V0",
+                                  "args": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "op": "HELP",
+                      "args": [
+                        {
+                          "op": "YOU",
+                          "args": []
+                        },
+                        {
+                          "op": "V0",
+                          "args": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      5,
+      6,
+      40,
+      27,
+      15,
+      27,
+      7,
+      46,
+      27,
+      45,
+      27,
+      28,
+      14,
+      30,
+      34,
+      6,
+      3,
+      40,
+      27,
+      7,
+      47,
+      27,
+      48,
+      28,
+      27,
+      53,
+      31,
+      27
+    ],
+    "body_glyphs": 28,
+    "body_bits": 168,
+    "packet_glyphs": 32,
+    "frame_modules": [
+      20,
+      16
+    ],
+    "frame_padding_glyphs": 0,
+    "silex_feature_px2": 1280,
+    "silex_equal_em_px2": 36408.88888888889,
+    "english_px2": 70224,
+    "mandarin_px2": 44352,
+    "english_lines": [
+      "If every child believes that",
+      "someone loves them, then I",
+      "know that you will help every",
+      "child who reads a book."
+    ],
+    "mandarin_lines": [
+      "如果每个孩子都相",
+      "信有人爱自己，那",
+      "么我知道你将帮助",
+      "每个读书的孩子。"
+    ],
+    "english_feature_ratio": 54.8625,
+    "mandarin_feature_ratio": 34.65,
+    "english_equal_em_ratio": 1.928759765625,
+    "mandarin_equal_em_ratio": 1.2181640624999999
+  },
+  {
+    "id": "10",
+    "group": "stress",
+    "english": "You said: 'Hello, world!'.",
+    "mandarin": "你说：“Hello, world!”",
+    "notation": "(PAST (SAY YOU \"Hello, world!\"))",
+    "note": "Exact quoted bytes are preserved in all three renderings. A translated quotation would carry different literal information. PAST explicitly locates the utterance earlier than the evaluation context. SAY reports content without asserting its truth.",
+    "ast": {
+      "op": "PAST",
+      "args": [
+        {
+          "op": "SAY",
+          "args": [
+            {
+              "op": "YOU",
+              "args": []
+            },
+            {
+              "op": "TEXT",
+              "args": [],
+              "value": "Hello, world!"
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      33,
+      13,
+      31,
+      21,
+      13,
+      18,
+      6,
+      21,
+      44,
+      27,
+      6,
+      60,
+      44,
+      8,
+      7,
+      29,
+      47,
+      28,
+      38,
+      49,
+      36,
+      8,
+      16
+    ],
+    "body_glyphs": 23,
+    "body_bits": 138,
+    "packet_glyphs": 27,
+    "frame_modules": [
+      22,
+      13
+    ],
+    "frame_padding_glyphs": 0,
+    "silex_feature_px2": 1144,
+    "silex_equal_em_px2": 32540.44444444444,
+    "english_px2": 16752,
+    "mandarin_px2": 13728,
+    "english_lines": [
+      "You said: 'Hello, world!'."
+    ],
+    "mandarin_lines": [
+      "你说：“He",
+      "llo, world!”"
+    ],
+    "english_feature_ratio": 14.643356643356643,
+    "mandarin_feature_ratio": 12.0,
+    "english_equal_em_ratio": 0.5148055069930071,
+    "mandarin_equal_em_ratio": 0.42187500000000006
+  },
+  {
+    "id": "11",
+    "group": "stress",
+    "english": "Every axolotl sees you.",
+    "mandarin": "每只墨西哥钝口螈都看见你。",
+    "notation": "(ALL (CALL (SYMBOL \"urn:silex:demo:axolotl\") V0) (SEE V0 YOU))",
+    "note": "This pays for the full identifier instead of assigning a convenient new one-glyph word. Biological grounding of the identifier must already be shared or separately supplied; the table does not count a biological definition.",
+    "ast": {
+      "op": "ALL",
+      "args": [
+        {
+          "op": "CALL",
+          "args": [
+            {
+              "op": "SYMBOL",
+              "args": [],
+              "value": "urn:silex:demo:axolotl"
+            },
+            {
+              "op": "V0",
+              "args": []
+            }
+          ]
+        },
+        {
+          "op": "SEE",
+          "args": [
+            {
+              "op": "V0",
+              "args": []
+            },
+            {
+              "op": "YOU",
+              "args": []
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      6,
+      24,
+      1,
+      23,
+      22,
+      29,
+      23,
+      9,
+      46,
+      14,
+      39,
+      13,
+      41,
+      27,
+      6,
+      21,
+      56,
+      14,
+      38,
+      17,
+      37,
+      27,
+      22,
+      60,
+      58,
+      24,
+      23,
+      33,
+      47,
+      27,
+      6,
+      61,
+      52,
+      27,
+      0,
+      27,
+      43,
+      27,
+      31
+    ],
+    "body_glyphs": 39,
+    "body_bits": 234,
+    "packet_glyphs": 44,
+    "frame_modules": [
+      26,
+      16
+    ],
+    "frame_padding_glyphs": 0,
+    "silex_feature_px2": 1664,
+    "silex_equal_em_px2": 47331.555555555555,
+    "english_px2": 16272,
+    "mandarin_px2": 20352,
+    "english_lines": [
+      "Every axolotl sees you."
+    ],
+    "mandarin_lines": [
+      "每只墨西哥钝口螈都看见你。"
+    ],
+    "english_feature_ratio": 9.778846153846153,
+    "mandarin_feature_ratio": 12.23076923076923,
+    "english_equal_em_ratio": 0.34378756009615385,
+    "mandarin_equal_em_ratio": 0.4299879807692308
+  },
+  {
+    "id": "12",
+    "group": "stress",
+    "english": "Let S mean a person who sees themself. Every S remembers themself.",
+    "mandarin": "设S表示能看见自己的人，每个S都记得自己。",
+    "notation": "(LET (LAM (AND (PERSON V0) (SEE V0 V0))) (ALL (APP V1 V0) (REMEMBER V0 V0)))",
+    "note": "A fresh property is defined compositionally in the message. The arbitrary label S is replaced by a local binder, which preserves the alpha-equivalent formal claim. No new dictionary entry is assumed.",
+    "ast": {
+      "op": "LET",
+      "args": [
+        {
+          "op": "LAM",
+          "args": [
+            {
+              "op": "AND",
+              "args": [
+                {
+                  "op": "PERSON",
+                  "args": [
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                },
+                {
+                  "op": "SEE",
+                  "args": [
+                    {
+                      "op": "V0",
+                      "args": []
+                    },
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "op": "ALL",
+          "args": [
+            {
+              "op": "APP",
+              "args": [
+                {
+                  "op": "V1",
+                  "args": []
+                },
+                {
+                  "op": "V0",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "op": "REMEMBER",
+              "args": [
+                {
+                  "op": "V0",
+                  "args": []
+                },
+                {
+                  "op": "V0",
+                  "args": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      10,
+      8,
+      3,
+      46,
+      27,
+      43,
+      27,
+      27,
+      6,
+      9,
+      28,
+      27,
+      54,
+      27,
+      27
+    ],
+    "body_glyphs": 15,
+    "body_bits": 90,
+    "packet_glyphs": 19,
+    "frame_modules": [
+      14,
+      16
+    ],
+    "frame_padding_glyphs": 1,
+    "silex_feature_px2": 896,
+    "silex_equal_em_px2": 25486.22222222222,
+    "english_px2": 48000,
+    "mandarin_px2": 29696,
+    "english_lines": [
+      "Let S mean a person",
+      "who sees themself. Every",
+      "S remembers themself."
+    ],
+    "mandarin_lines": [
+      "设S表示能看见",
+      "自己的人，每个",
+      "S都记得自己。"
+    ],
+    "english_feature_ratio": 53.57142857142857,
+    "mandarin_feature_ratio": 33.142857142857146,
+    "english_equal_em_ratio": 1.883370535714286,
+    "mandarin_equal_em_ratio": 1.1651785714285716
+  },
+  {
+    "id": "13",
+    "group": "stress",
+    "english": "There are at least two people.",
+    "mandarin": "至少有两个人。",
+    "notation": "(SOME (PERSON V0) (SOME (AND (PERSON V0) (NOT (EQ V0 V1))) TRUE))",
+    "note": "The existential witnesses must be distinct. This asserts at least two, without an upper bound.",
+    "ast": {
+      "op": "SOME",
+      "args": [
+        {
+          "op": "PERSON",
+          "args": [
+            {
+              "op": "V0",
+              "args": []
+            }
+          ]
+        },
+        {
+          "op": "SOME",
+          "args": [
+            {
+              "op": "AND",
+              "args": [
+                {
+                  "op": "PERSON",
+                  "args": [
+                    {
+                      "op": "V0",
+                      "args": []
+                    }
+                  ]
+                },
+                {
+                  "op": "NOT",
+                  "args": [
+                    {
+                      "op": "EQ",
+                      "args": [
+                        {
+                          "op": "V0",
+                          "args": []
+                        },
+                        {
+                          "op": "V1",
+                          "args": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "TRUE",
+              "args": []
+            }
+          ]
+        }
+      ]
+    },
+    "tokens": [
+      7,
+      46,
+      27,
+      7,
+      3,
+      46,
+      27,
+      2,
+      11,
+      27,
+      28,
+      0
+    ],
+    "body_glyphs": 12,
+    "body_bits": 72,
+    "packet_glyphs": 16,
+    "frame_modules": [
+      12,
+      16
+    ],
+    "frame_padding_glyphs": 0,
+    "silex_feature_px2": 768,
+    "silex_equal_em_px2": 21845.333333333332,
+    "english_px2": 20928,
+    "mandarin_px2": 11136,
+    "english_lines": [
+      "There are at least two people."
+    ],
+    "mandarin_lines": [
+      "至少有两个人。"
+    ],
+    "english_feature_ratio": 27.25,
+    "mandarin_feature_ratio": 14.5,
+    "english_equal_em_ratio": 0.9580078125,
+    "mandarin_equal_em_ratio": 0.509765625
+  }
+]

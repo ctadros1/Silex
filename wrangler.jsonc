@@ -1,0 +1,10 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "silex-converter",
+  "account_id": "b7f0d3410d63702a06431f2bc750061f",
+  "compatibility_date": "2026-10-12",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{"pattern": "project.christiantadros.com/silex-converter*", "zone_name": "christiantadros.com"}],
+  "assets": {"directory": "./dist", "html_handling": "auto-trailing-slash", "not_found_handling": "none"}
+}

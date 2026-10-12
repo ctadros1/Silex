@@ -1,0 +1,10 @@
+{
+  "codec_bytes": 13933,
+  "registry_bytes": 2948,
+  "grammar_semantics_bytes": 22889,
+  "length_framed_total_bytes": 39794,
+  "zlib_bytes": 14531,
+  "common_binary_carrier_area_px2_at_u2": 476400,
+  "demonstration_break_even_messages_english": 18,
+  "demonstration_break_even_messages_mandarin": 24
+}

@@ -1,0 +1,78 @@
+{
+  "protocol": {
+    "english_font": "/System/Library/Fonts/Supplemental/Arial.ttf",
+    "mandarin_font": "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
+    "natural_em_px": 32,
+    "natural_line_advance_px": 40,
+    "natural_quiet_px_per_side": 4,
+    "natural_wrap_widths_px": [
+      32,
+      512
+    ],
+    "silex_feature_module_px": 2,
+    "silex_equal_em_module_px": 10.666666666666666,
+    "warning": "Nominal feature/display comparison, not a measured equality of human or OCR error rates. Chinese translations are authored glosses, not independently validated."
+  },
+  "totals": {
+    "core": {
+      "silex_feature_px2": 6992,
+      "silex_equal_em_px2": 198883.55555555556,
+      "english_px2": 254984,
+      "mandarin_px2": 205568,
+      "body_bits": 642,
+      "body_glyphs": 107,
+      "messages": 9,
+      "english_feature_ratio": 36.46796338672769,
+      "mandarin_feature_ratio": 29.40045766590389,
+      "english_equal_em_ratio": 1.2820768378146452,
+      "mandarin_equal_em_ratio": 1.0336098398169336
+    },
+    "stress": {
+      "silex_feature_px2": 4472,
+      "silex_equal_em_px2": 127203.55555555555,
+      "english_px2": 101952,
+      "mandarin_px2": 74912,
+      "body_bits": 534,
+      "body_glyphs": 89,
+      "messages": 4,
+      "english_feature_ratio": 22.797853309481216,
+      "mandarin_feature_ratio": 16.75134168157424,
+      "english_equal_em_ratio": 0.8014870304114491,
+      "mandarin_equal_em_ratio": 0.5889143559928444
+    },
+    "all": {
+      "silex_feature_px2": 11464,
+      "silex_equal_em_px2": 326087.1111111111,
+      "english_px2": 356936,
+      "mandarin_px2": 280480,
+      "body_bits": 1176,
+      "body_glyphs": 196,
+      "messages": 13,
+      "english_feature_ratio": 31.135380321004885,
+      "mandarin_feature_ratio": 24.466154919748778,
+      "english_equal_em_ratio": 1.094603214410328,
+      "mandarin_equal_em_ratio": 0.860138258897418
+    }
+  },
+  "same_carrier_controls": [
+    {
+      "language": "Silex",
+      "uncompressed_bytes": 159,
+      "zlib_bytes": 170,
+      "carrier_px2": 6880
+    },
+    {
+      "language": "English",
+      "uncompressed_bytes": 561,
+      "zlib_bytes": 276,
+      "carrier_px2": 10560
+    },
+    {
+      "language": "Mandarin",
+      "uncompressed_bytes": 585,
+      "zlib_bytes": 355,
+      "carrier_px2": 13312
+    }
+  ],
+  "zlib_version": "1.2.12"
+}

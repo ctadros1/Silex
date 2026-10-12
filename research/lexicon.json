@@ -1,0 +1,258 @@
+{
+  "TRUE": {
+    "id": 0,
+    "arity": 0
+  },
+  "FALSE": {
+    "id": 1,
+    "arity": 0
+  },
+  "NOT": {
+    "id": 2,
+    "arity": 1
+  },
+  "AND": {
+    "id": 3,
+    "arity": 2
+  },
+  "OR": {
+    "id": 4,
+    "arity": 2
+  },
+  "IF": {
+    "id": 5,
+    "arity": 2
+  },
+  "ALL": {
+    "id": 6,
+    "arity": 2
+  },
+  "SOME": {
+    "id": 7,
+    "arity": 2
+  },
+  "LAM": {
+    "id": 8,
+    "arity": 1
+  },
+  "APP": {
+    "id": 9,
+    "arity": 2
+  },
+  "LET": {
+    "id": 10,
+    "arity": 2
+  },
+  "EQ": {
+    "id": 11,
+    "arity": 2
+  },
+  "AT": {
+    "id": 12,
+    "arity": 2
+  },
+  "SAY": {
+    "id": 13,
+    "arity": 2
+  },
+  "KNOW": {
+    "id": 14,
+    "arity": 2
+  },
+  "BELIEVE": {
+    "id": 15,
+    "arity": 2
+  },
+  "CAUSE": {
+    "id": 16,
+    "arity": 2
+  },
+  "BEFORE": {
+    "id": 17,
+    "arity": 2
+  },
+  "PAIR": {
+    "id": 18,
+    "arity": 2
+  },
+  "NIL": {
+    "id": 19,
+    "arity": 0
+  },
+  "NAT": {
+    "id": 20,
+    "arity": 0
+  },
+  "TEXT": {
+    "id": 21,
+    "arity": 0
+  },
+  "REF": {
+    "id": 22,
+    "arity": 0
+  },
+  "SYMBOL": {
+    "id": 23,
+    "arity": 0
+  },
+  "CALL": {
+    "id": 24,
+    "arity": -1
+  },
+  "THE": {
+    "id": 25,
+    "arity": 1
+  },
+  "QUOTE": {
+    "id": 26,
+    "arity": 1
+  },
+  "V0": {
+    "id": 27,
+    "arity": 0
+  },
+  "V1": {
+    "id": 28,
+    "arity": 0
+  },
+  "V2": {
+    "id": 29,
+    "arity": 0
+  },
+  "ME": {
+    "id": 30,
+    "arity": 0
+  },
+  "YOU": {
+    "id": 31,
+    "arity": 0
+  },
+  "NOW": {
+    "id": 32,
+    "arity": 0
+  },
+  "PAST": {
+    "id": 33,
+    "arity": 1
+  },
+  "FUTURE": {
+    "id": 34,
+    "arity": 1
+  },
+  "POSSIBLE": {
+    "id": 35,
+    "arity": 1
+  },
+  "NECESSARY": {
+    "id": 36,
+    "arity": 1
+  },
+  "WANT": {
+    "id": 37,
+    "arity": 2
+  },
+  "OUGHT": {
+    "id": 38,
+    "arity": 1
+  },
+  "ASK": {
+    "id": 39,
+    "arity": 1
+  },
+  "CHILD": {
+    "id": 40,
+    "arity": 1
+  },
+  "BIRD": {
+    "id": 41,
+    "arity": 1
+  },
+  "RED": {
+    "id": 42,
+    "arity": 1
+  },
+  "SEE": {
+    "id": 43,
+    "arity": 2
+  },
+  "GIVE": {
+    "id": 44,
+    "arity": 3
+  },
+  "LOVE": {
+    "id": 45,
+    "arity": 2
+  },
+  "PERSON": {
+    "id": 46,
+    "arity": 1
+  },
+  "BOOK": {
+    "id": 47,
+    "arity": 1
+  },
+  "READ": {
+    "id": 48,
+    "arity": 2
+  },
+  "BUILD": {
+    "id": 49,
+    "arity": 2
+  },
+  "SCIENTIST": {
+    "id": 50,
+    "arity": 1
+  },
+  "CITY": {
+    "id": 51,
+    "arity": 1
+  },
+  "LIVE": {
+    "id": 52,
+    "arity": 2
+  },
+  "HELP": {
+    "id": 53,
+    "arity": 2
+  },
+  "REMEMBER": {
+    "id": 54,
+    "arity": 2
+  },
+  "DIE": {
+    "id": 55,
+    "arity": 1
+  },
+  "MACHINE": {
+    "id": 56,
+    "arity": 1
+  },
+  "SOLVE": {
+    "id": 57,
+    "arity": 2
+  },
+  "PROBLEM": {
+    "id": 58,
+    "arity": 1
+  },
+  "PROVE": {
+    "id": 59,
+    "arity": 2
+  },
+  "FAIL": {
+    "id": 60,
+    "arity": 1
+  },
+  "RUN": {
+    "id": 61,
+    "arity": 1
+  },
+  "WATER": {
+    "id": 62,
+    "arity": 0
+  },
+  "DRINK": {
+    "id": 63,
+    "arity": 2
+  }
+}

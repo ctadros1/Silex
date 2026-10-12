@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "rendered_frames_checked_against_python": 26,
+  "literal_payload_labels_checked": true,
+  "responsive_viewports": [
+    {
+      "width": 1280,
+      "height": 900,
+      "doc": 1280,
+      "window": 1280
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "doc": 768,
+      "window": 768
+    },
+    {
+      "width": 320,
+      "height": 900,
+      "doc": 320,
+      "window": 320
+    }
+  ],
+  "javascript_errors": []
+}

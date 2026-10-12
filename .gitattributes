@@ -1,0 +1,7 @@
+* text=auto
+*.pdf binary
+*.png binary
+*.jpg binary
+*.zip binary
+*.csv -text whitespace=cr-at-eol
+reference/*.md whitespace=-blank-at-eof

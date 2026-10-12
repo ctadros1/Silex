@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "checks": {
+    "all_64_visual_patterns": 64,
+    "unsigned_integer_round_trips": 109,
+    "unicode_literal_round_trips": 9,
+    "malformed_integer_cases": 2,
+    "malformed_scope_literal_and_arity_cases": 9,
+    "random_syntax_round_trips": 1000,
+    "native_png_round_trips": 32,
+    "detected_single_bit_packet_corruptions": 78,
+    "damaged_border_rejected": 1,
+    "independent_scope_countermodel": 1,
+    "compressed_syntax_round_trips": 100,
+    "compressed_native_png_round_trips": 12,
+    "malformed_compressed_stream_cases": 4
+  },
+  "limits": [
+    "No human readability or learning experiment",
+    "No camera, blur or perspective detection test",
+    "Randomized tests establish reversible syntax, not a full semantic interpreter",
+    "Only a quantified-predicate subset has an executed model evaluator"
+  ]
+}

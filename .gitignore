@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.wrangler/
+.env*
+.dev.vars*
+.DS_Store
+worker-configuration.d.ts
+
+.task-status.md

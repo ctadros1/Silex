@@ -26,21 +26,29 @@ There is one bird that every child sees.
 4. Download PNG/SVG or copy the image.
 5. Choose **Silex image** to decode a complete raster panel locally.
 
-English translation uses **a trained AMR meaning parser**, amrlib’s BART-base model, converted to quantized ONNX. It does not match a list of sentences or use the hand-written English grammar. A trained UDPipe tokenizer splits documents into statements; the model processes each statement and a deterministic compiler writes the resulting graphs into Silex. Repeated statements remain separate, with references local to each graph. Concepts and relation labels are open strings.
+English translation uses **a trained AMR meaning parser**, followed by a semantic compiler. It does not match a list of sentences or encode the input’s letters. The compiler uses the original Silex heads for complete meanings it can represent, including participants, properties, quantifiers, negation, attitudes, questions, and time. A trained UDPipe annotator supplies local article and morphology distinctions that AMR omits.
 
-The first English translation downloads about **270 MB** of model/runtime assets. Subsequent attempts reuse the browser cache. Inference runs on the CPU in a background worker, using up to four threads when cross-origin isolation is available; English does not require WebGPU. The page shows checked download bytes, the current statement, generated-output activity, elapsed time, and an animated indicator. **Stop** terminates the worker immediately. Editing the input cancels the previous attempt; exports remain disabled until a new result is ready.
+```text
+I see you.                  → (SEE ME YOU)                                  3 meaning glyphs
+I see the red bird.          → (SEE ME (THE (AND (BIRD V0) (RED V0))))       8 meaning glyphs
+Repeated red-bird statement → a shared LET definition and two ordered uses 14 meaning glyphs
+```
 
-Spanish, French, German, Italian, Portuguese, Mandarin, Japanese, Korean, Arabic, Hindi, and Russian use an optional **Qwen3.5 4B** language model through WebLLM. It translates ordinary text into English before meaning parsing. It requires WebGPU, shader-f16, approximately 2.4 GB of downloaded files and sufficient GPU memory. Both the original words and the English intermediate are retained in these images. To read an image in its original language, no AI is needed. Translation into another language uses the optional local language model.
+Original wording, punctuation, whitespace, and JSON are **excluded from normal images**. Unknown concepts and richer structures use a [compact semantic extension](docs/Semantic-Compression.md), with shared concept/role codes and counted local declarations. Every graph node, relation, and supported grammatical feature is retained; the compiler does not drop modifiers to force a small output. Exact wording remains an explicit, separate TEXT mode.
 
-The original scoped grammar remains available through **Silex expression**, including precise quantifier scope and arbitrary declared predicates. Older images remain decodable. The legacy example grammar is retained for compatibility tests; it is not the text translator’s runtime path.
+The first English translation downloads about **270 MB** of model/runtime assets. Inference runs in a background worker, using up to four CPU threads where browser isolation permits. The page shows checked download bytes, statement progress, output activity, elapsed time, and an animated indicator. **Stop** terminates the attempt. Browser caches reuse verified unchanged weights across annotator updates.
 
-## What the image contains
+Spanish, French, German, Italian, Portuguese, Mandarin, Japanese, Korean, Arabic, Hindi, and Russian use an optional **Qwen3.5 4B** model through WebLLM to produce an English interpretation before semantic compilation. It requires WebGPU, shader-f16, approximately 2.4 GB of downloads and sufficient GPU memory. Other languages and natural readings of complex graphs use this same local model.
 
-The [meaning-graph convention](docs/Meaning-Graphs.md) uses the existing `PAIR`, `TEXT`, `CALL`, `SYMBOL`, and `NAT` heads. A counted UTF-8 dictionary contains concepts, roles, values, source words, and whitespace. Each statement contains a root, concept nodes, directed relations, typed values, and its source atoms. Shared dictionary entries save repetition; they do not merge statements or node identities.
+On image input, the converter reads **the encoded meaning** and regenerates wording in the selected output language. It cannot recover wording that was intentionally not stored. The original core codec, explicit **Silex expression** mode, old graph-and-source images, and lexical packages remain readable.
 
-Every declaration, reference, separator, and source witness costs real image area. There is no external per-image vocabulary database or hidden attachment. The original Python codec can decode the enclosing expression; interpreting its graph convention requires the published graph specification and shared AMR/English grounding knowledge. The encoder’s neural weights are not needed to recover the graph or source words.
+## Semantic compression
 
-The converter never treats a whole-sentence quotation as a successful meaning analysis. **Preserve exact wording** remains a separate, explicitly identified text-literal mode. Normal translation requires a real meaning graph.
+The [compiler specification](docs/Semantic-Compression.md) describes native operators, ordered documents, LET sharing, and the `g2/1` open graph convention. Familiar concepts use shared codes; new labels are declared once within the image. Names, actual quotations, and exact numerical values pay their literal costs. The published [codebook](reference/Semantic-Codebook.json) is shared decoder knowledge, not a per-image sidecar.
+
+Across 243 tested inputs containing 252 statements, the current compiler reduced complete direct-frame module area by **65.8%** compared with the previous graph-plus-source converter, at the same module size. The repeated bird example fell from **364 to 14 meaning glyphs**, and from **2,640 to 208 frame modules**, including framing and padding. Only 30 statements in that varied sample fit native heads completely; the rest used compact semantic declarations. The improvement is not a claim that all outputs use the small native inventory or outperform English and Mandarin typography.
+
+This comparison deliberately stops preserving exact surface wording. It measures the intended semantic format against the old verbose converter, not lossless text compression, semantic entropy, or matched human recognition error. Model interpretation may still be wrong. See [verification](docs/Verification.md) and [compression measurements](docs/Semantic-Compression.md).
 
 ## Privacy
 
@@ -73,17 +81,19 @@ python3 reference/silex_codec.py --decode-png message.png
 
 ## Evidence and limitations
 
-The new trained pipeline completed **243 inputs containing 252 statements**, including 67 externally sourced English texts, without graph-compilation or codec-round-trip failures. Every original character was recovered from the encoded source atoms. Three model outputs needed completed closing brackets, which are reported as interpretation notes. This checks operational reliability, not universal semantic accuracy. Browser checks and the distinction between unit tests, model tests, and live deployment evidence are recorded in [Verification](docs/Verification.md).
+The new trained pipeline completed **243 inputs containing 252 statements**, including 67 externally sourced English texts, without graph-compilation or codec-round-trip failures. Each new expression decoded exactly; compact graph escapes retained their complete graphs and grammatical feature flags. Three model outputs needed completed closing brackets, which are reported as interpretation notes. This checks operational reliability, not universal semantic accuracy. Browser checks and the distinction between unit tests, model tests, and live deployment evidence are recorded in [Verification](docs/Verification.md).
 
-AMR is an interpretation representation, not complete first-order semantics. It does not fully specify tense, articles, exact quantifier scope, or cross-sentence coreference. A model can choose the wrong concept, identity, attachment, or role. For example, the tested biological sentence classified a mitochondrion as an enzyme. Source words preserve information the graph omitted or misinterpreted, but they do not make the graph correct. Review both. The formal language’s expressiveness and the automatic translator’s accuracy are different claims.
+AMR is an interpretation representation, not complete first-order semantics. It does not fully specify tense, articles, exact quantifier scope, or cross-sentence coreference. A model can choose the wrong concept, identity, attachment, or role. For example, the tested biological sentence classified a mitochondrion as an enzyme. Native compilation preserves represented distinctions; it cannot recover meaning the parser failed to infer. Review the literal interpretation. The formal language’s expressiveness and the automatic translator’s accuracy are different claims.
 
-The original 13-example area experiment found Silex 8.6% smaller than English and 16.3% larger than Mandarin at equal nominal 32-pixel character height. It did not control recognition error or measure semantic entropy. Those results apply to the original scoped specimens, **not** these larger graph-and-source packages. No universal density optimum or universal translation accuracy is claimed. See the specification and [research records](research) for measurement definitions and decoder costs.
+The original 13-example area experiment found Silex 8.6% smaller than English and 16.3% larger than Mandarin at equal nominal 32-pixel character height. It did not control recognition error or measure semantic entropy. Those results apply to the original scoped specimens, **not** the current semantic compiler. No universal density optimum or universal translation accuracy is claimed. See the specification and [research records](research) for measurement definitions and decoder costs.
 
 | Path | Contents |
 |---|---|
 | `src/codec.js` | Original syntax, framing, rendering, and pixel decoding |
 | `src/meaning-worker.js`, `src/meaning.js` | Trained local interpretation and cancellation |
-| `src/meaning-graph.js` | Open graph compilation, decoding, and visual field maps |
+| `src/semantic-compiler.js`, `src/compact-graph.js` | Native semantics, compact graph escapes, reuse, and visual field maps |
+| `src/semantic-features.js`, `src/document-interpreter.js` | Learned grammar annotations and request-local model reuse |
+| `src/meaning-graph.js` | Legacy graph-and-source image compatibility |
 | `src/document-segments.js`, `src/model-assets.js` | Learned boundary adapter and verified asset caching |
 | `src/ai.js`, `src/ai-worker.js` | Optional local language translation |
 | `src/app.js`, `src/index.html`, `src/style.css` | Converter interface |

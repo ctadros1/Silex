@@ -1,0 +1,219 @@
+{
+  "profile": "g2/1",
+  "concepts": [
+    "i",
+    "you",
+    "child",
+    "bird",
+    "person",
+    "book",
+    "scientist",
+    "city",
+    "machine",
+    "problem",
+    "water",
+    "see-01",
+    "love-01",
+    "read-01",
+    "build-01",
+    "give-01",
+    "help-01",
+    "drink-01",
+    "run-01",
+    "die-01",
+    "fail-01",
+    "know-01",
+    "believe-01",
+    "want-01",
+    "say-01",
+    "remember-01",
+    "red-02",
+    "possible-01",
+    "necessary-01",
+    "and",
+    "or",
+    "every",
+    "each",
+    "all",
+    "name",
+    "amr-unknown",
+    "date-entity",
+    "organization",
+    "country",
+    "have-org-role-91",
+    "have-rel-role-91",
+    "have-condition-91",
+    "have-polarity-91"
+  ],
+  "roles": [
+    "ARG0",
+    "ARG1",
+    "ARG2",
+    "ARG3",
+    "ARG4",
+    "ARG5",
+    "ARG0-of",
+    "ARG1-of",
+    "ARG2-of",
+    "ARG3-of",
+    "mod",
+    "polarity",
+    "mode",
+    "quant",
+    "name",
+    "location",
+    "time",
+    "cause",
+    "purpose",
+    "condition",
+    "concession",
+    "concession-of",
+    "direction",
+    "source",
+    "destination",
+    "path",
+    "manner",
+    "degree",
+    "domain",
+    "poss",
+    "part",
+    "consist-of",
+    "accompanier",
+    "beneficiary",
+    "instrument",
+    "topic",
+    "example",
+    "ord",
+    "unit",
+    "value",
+    "scale",
+    "op1",
+    "op2",
+    "op3",
+    "op4",
+    "op5",
+    "op6",
+    "op7",
+    "op8",
+    "op9",
+    "op10",
+    "op11",
+    "op12",
+    "op13",
+    "op14",
+    "op15",
+    "op16"
+  ],
+  "nativeFrames": {
+    "see-01": [
+      "SEE",
+      "ARG0",
+      "ARG1"
+    ],
+    "love-01": [
+      "LOVE",
+      "ARG0",
+      "ARG1"
+    ],
+    "read-01": [
+      "READ",
+      "ARG0",
+      "ARG1"
+    ],
+    "build-01": [
+      "BUILD",
+      "ARG0",
+      "ARG1"
+    ],
+    "give-01": [
+      "GIVE",
+      "ARG0",
+      "ARG1",
+      "ARG2"
+    ],
+    "help-01": [
+      "HELP",
+      "ARG0",
+      "ARG1"
+    ],
+    "drink-01": [
+      "DRINK",
+      "ARG0",
+      "ARG1"
+    ],
+    "run-01": [
+      "RUN",
+      "ARG0"
+    ],
+    "die-01": [
+      "DIE",
+      "ARG1"
+    ],
+    "fail-01": [
+      "FAIL",
+      "ARG1"
+    ],
+    "know-01": [
+      "KNOW",
+      "ARG0",
+      "ARG1"
+    ],
+    "believe-01": [
+      "BELIEVE",
+      "ARG0",
+      "ARG1"
+    ],
+    "want-01": [
+      "WANT",
+      "ARG0",
+      "ARG1"
+    ],
+    "say-01": [
+      "SAY",
+      "ARG0",
+      "ARG1"
+    ],
+    "remember-01": [
+      "REMEMBER",
+      "ARG0",
+      "ARG1"
+    ],
+    "red-02": [
+      "RED",
+      "ARG1"
+    ],
+    "possible-01": [
+      "POSSIBLE",
+      "ARG1"
+    ],
+    "necessary-01": [
+      "NECESSARY",
+      "ARG1"
+    ]
+  },
+  "nativeProperties": {
+    "child": "CHILD",
+    "bird": "BIRD",
+    "person": "PERSON",
+    "book": "BOOK",
+    "scientist": "SCIENTIST",
+    "city": "CITY",
+    "machine": "MACHINE",
+    "problem": "PROBLEM",
+    "water": "WATER"
+  },
+  "featureBits": {
+    "INDEFINITE": 1,
+    "DEFINITE": 2,
+    "ALL": 3,
+    "NEAR": 4,
+    "FAR": 5,
+    "NEGATIVE": 6,
+    "PAST": 16,
+    "FUTURE": 32,
+    "ONGOING": 64,
+    "PERFECT": 128,
+    "PLURAL": 256,
+    "CONDITIONAL": 512
+  }
+}

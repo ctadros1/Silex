@@ -78,6 +78,8 @@ function sourceAtoms(source,language){
   return {atoms,tail:gap};
 }
 
+// Legacy writer retained for migration tests and measured old-format baselines.
+// Normal translation uses semantic-compiler.js instead.
 export function encodeMeaningDocument(parts,language='en',original=null){
   if(!Array.isArray(parts)||!parts.length||parts.length>512)fail('A meaning document needs 1–512 statements.');
   const strings=[''],indices=new Map([['',0]]);
@@ -136,11 +138,11 @@ export function decodeMeaningDocument(ast){
   return {language,interpretationLanguage:metadata.language,metadata,strings:pool,metadataNode:ast.args[0],documents,source};
 }
 
-export function literalGraphReading(document){
+export function literalGraphReading(document,nodeLabel=n=>n.concept){
   return document.documents.map((g,i)=>{
     const visited=new Set();
     function describe(id,depth=0){
-      const n=g.nodes[id],name=`n${id}=${n.concept}`;if(visited.has(id)||depth>24)return `↩ n${id}`;visited.add(id);
+      const n=g.nodes[id],name=`n${id}=${nodeLabel(n)}`;if(visited.has(id)||depth>24)return `↩ n${id}`;visited.add(id);
       const edges=g.edges.filter(e=>e.source===id);return name+(edges.length?' ['+edges.map(e=>`${e.role}: ${e.target.kind==='node'?describe(e.target.id,depth+1):e.target.type==='string'?JSON.stringify(e.target.value):e.target.value}`).join('; ')+']':'');
     }
     return `Statement ${i+1}: ${describe(g.root)}`;
@@ -160,6 +162,7 @@ export function graphPieceMap(document){
 }
 
 export function dictionaryGlyphSpan(document,records,index){
+  if(!document?.metadataNode||!Number.isInteger(index))return null;
   const metadata=document.metadataNode,value=metadata.value;
   if(value!==JSON.stringify(document.metadata))return null;
   const prefix=value.slice(0,value.indexOf('"strings":[')+11);let position=prefix.length;

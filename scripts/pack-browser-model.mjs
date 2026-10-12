@@ -5,7 +5,7 @@ const source=process.argv[2]||'.parser-cache/meaning-model';
 const output='.parser-cache/browser-model';
 const sha=data=>createHash('sha256').update(data).digest('hex');
 await mkdir(path.join(output,'shards'),{recursive:true});
-const manifest={version:'meaning-model-v0.1.0',files:{}};
+const manifest={version:'meaning-model-v0.1.1',files:{}};
 async function add(name,file,shard=false){
   const data=await readFile(file),record={bytes:data.length,sha256:sha(data)};
   if(shard){record.chunks=[];for(let at=0,i=0;at<data.length;at+=16*1024*1024,i++){

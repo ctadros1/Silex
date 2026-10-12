@@ -1,33 +1,38 @@
 # Converter verification
 
-Evidence recorded on 2026-10-12. Source tests, native model execution, browser WASM behavior, and deployed files are separate checks. None establishes universal semantic interpretation accuracy.
+Evidence recorded on 2026-10-12. Unit tests, native model execution, visual area measurements, browser inference, and deployed files are separate checks. None proves universal interpretation accuracy.
 
-## Unit and compatibility checks
+## Current encoding and compatibility checks
 
-`npm test` passes 41 tests. The new graph checks cover repeated statements with local references, open concepts/roles, reentrancy, separate literal tags, exact large numbers, original non-English atoms, Unicode/escaped-string dictionary highlight positions, malformed references, learned Unicode sentence ranges, and SHA-256 asset integrity.
+`npm test` passes 56 tests. New semantic-compilation checks establish:
 
-Compatibility checks retain all 13 original Python specimens with identical words, packets, and geometry; all 64 glyphs; exact Unicode and large integers; scope/type/arity rejection; compressed frames; single-bit corruption; and 1,000 deterministic random syntax trees. The legacy English/example compiler and its countermodels still pass, but it is no longer the forward text translator. Its authored sentence fixtures are not evidence for the trained parser’s accuracy.
+- “I see you” becomes exactly `(SEE ME YOU)`, three original semantic glyphs and a 120-square-module complete frame. It has no source TEXT or JSON payload.
+- Definite descriptions, quantifiers, time, negation, and question scope use original heads and named-variable compilation.
+- Repeated red-bird statements remain two ordered items while sharing one definition through LET, using 14 meaning glyphs.
+- Every graph node/edge and supported grammatical feature is consumed by native compilation or retained by the compact extension. Unknown concepts, extra roles, aspect, and cycles are not discarded to force small output.
+- Open labels, exact large numbers, quote/number distinctions, Unicode, local identities, reentrancy, and typed shared literal values survive codec round-trips.
+- Three hundred statement occurrences retain their order and count in a bounded-depth document.
+- Identical statements reuse model work only within the active request; they are not deduplicated as utterances or persisted as a source-text database.
+- The published codebook matches the decoder’s concept and relation indexes.
 
-## Actual frozen-model regression
+All 13 original Python specimens still have identical words, packets, geometry, and decoding. Other compatibility tests retain all 64 glyphs, large integers, UTF-8, scope/type/arity rejection, compressed frames, single-bit packet corruption, and 1,000 deterministic random syntax trees. Legacy graph-plus-source packages and lexical packages remain readable. Legacy grammar fixture tests are not measurements of the current translator’s accuracy.
 
-`node scripts/check-meaning-model.mjs` executed the quantized BART-base meaning parser and learned UDPipe sentence tokenizer on the native CPU. It processed 243 inputs and 252 statements in 24.1 seconds on the development machine, with zero graph-compilation or codec-round-trip failures. This timing excludes model loading and is not a browser performance claim.
+## Actual-model and compression checks
 
-Inputs consisted of 16 additional document/technical examples, 160 varied existing sentence fixtures, and 67 texts selected by a fixed sampling rule from the externally sourced UD English EWT test partition. Categories include repeated statements, punctuation/abbreviations, technical vocabulary, names, observed events, paths, questions, negation, quantification, transfers, relative clauses, nested beliefs, modality, passive voice, concession, and quoted speech. Overlap with upstream model training sources was not audited.
+The frozen quantized BART-base model and learned UDPipe annotator processed 243 inputs and 252 statements. There were zero compilation or codec-round-trip failures. Thirty statements used native heads completely; the remainder used compact semantic declarations. Escaped graphs retained all model concepts, relation targets and supported feature flags. The run included 67 externally sourced texts from a fixed sample of UD English EWT, alongside authored regression inputs. Overlap with model training sources was not audited.
 
-Every decoded source witness matched its input character for character. Three outputs omitted closing graph parentheses; completed-node repairs were recorded. Assertions check that the reported repeated sentence has two graphs, the bird is the flight’s actor, and “you” is the walking event’s actor. These are automatic interpretation tests, rather than hand-supplied graphs.
+The old graph-and-source format used 84,570 meaning glyphs and 609,170 square modules of complete direct-frame area. The current format used 24,852 meaning glyphs and 208,076 square modules, a **65.8% area reduction** at the same module width. Border, margin, length, checksum, and padding are included. Details and individual examples are in [Semantic Compression](Semantic-Compression.md).
 
-A syntax-success count is not a semantic-accuracy estimate. Manual inspection found limitations: the biological sentence called a mitochondrion an enzyme, some frame roles differed from the author’s unquantized output, and an external name example reused a name node incorrectly. Source atoms retain the correct wording but do not correct the graph. No claim that all valid sentences have one correctly inferred formal meaning is made.
+This compares interpreted meaning with the old representation that also retained exact wording. It is not lossless compression of identical text data, a measurement of semantic entropy, or a matched recognition-error comparison with English/Mandarin typography. The original scoped-specimen research measurements remain unchanged.
 
-## Browser and deployment checks
+Model error is distinct from encoding error. Inspection has found wrong biological classifications and an incorrect analysis of the idiom “take flight.” Three model outputs needed completed closing parentheses, with those repairs recorded. Native compilation does not repair semantic errors or infer omitted content. The compact extension retains the model’s representation, which may itself be incomplete or wrong.
 
-The actual browser WASM parser, rather than the native ONNX runtime, is tested separately. The recorded browser cases include the repeated bird statements and the reported flight/walking inputs; their graphs preserved the intended count and actors. The interface exposes download bytes, statement stage, output activity, elapsed time, and cancellation without sending sentence text to an inference server.
+## Browser, exports, and deployment
 
-The deployed page also completed repeated French input and Mandarin input; images decoded locally back to the exact original wording. Spanish and Arabic outputs were generated by the optional on-device language model. Identical French statements now have identical English intermediates; the AMR parser still misinterpreted the idiom “take flight” as take/flee, another known model limitation.
+Browser tests use the actual WASM model, not the native ONNX timing as a substitute. The native English example visibly renders SEE, ME and YOU with a three-glyph caption, native literal reading, and correct field highlights. The compiled source exposes no source-word witness in normal exports. Progress and Stop remain available during local interpretation.
 
-The repeated English example produced two graphs and a 364-glyph image. PNG download, SVG download, and clipboard image copy succeeded. The independently maintained original Python pixel decoder read the browser-downloaded PNG and recovered both complete statement records. Selecting a concept mapped its actual reference fields and dictionary bits.
+The browser rendered the repeated red-bird document with 14 glyphs and decoded its bitmap into both statements. The flying-bird example rendered a 98-glyph compact graph, retaining the bird as the flight actor, the direction, definiteness, and ongoing aspect. Selecting its flight concept highlighted its reference and paid declaration. Public PNG and SVG downloads completed; the independent Python decoder recovered `(SEE ME YOU)` from the downloaded PNG. Clipboard pasting recovered the same expression through the browser's pixel decoder. Native meaning readback produced English and French without source text.
 
-Stop ended an active attempt and disabled stale exports; a subsequent attempt succeeded. The spinner, stage, checked download bytes, and elapsed time were visible. Browser CPU inference can remain slow; parallel CPU threads are used under cross-origin isolation, with a single-thread fallback.
+Desktop and 375-pixel mobile views were inspected, with no horizontal page overflow in the mobile view. The deployed application, worker, manifest, and codebook were compared with local build hashes. The upload URL rejects POST with 405. Browser evidence and source/model artifact checks are separate from the area benchmark. Source wording can only be recovered from explicit exact-text mode or historical images that stored it.
 
-GitHub Actions run 38275603408 verified a fresh checkout: dependency install, 41 unit tests, all prepared-model SHA-256 checks, 176 actual-model inputs containing 184 statements, and the final static build passed. The separate 243-input local run included the optional external corpus. The public application and meaning-worker bytes were compared with local build outputs; the public page returned HTTP 200 and rejected POST with 405. No inference/upload runtime bindings were configured.
-
-The original area comparisons remain limited to the original formal specimens; the graph-and-source packages have not been compared at matched recognition error against English or Mandarin.
+The server serves static files and configures no inference or image-upload runtime bindings. Model asset hashes are pinned. The original and current grammars, semantic codebook, and model reproduction instructions are public.

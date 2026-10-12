@@ -52,3 +52,16 @@ test('model shards and assembled assets require the declared bytes and SHA-256',
   assert.deepEqual(await load('model'),bytes);
   const broken=createAssetLoader('https://example.invalid/',manifest,()=>{},async()=>new Response('bad'));await assert.rejects(broken('model'),/integrity/);
 });
+test('cross-version caches are hash checked and unavailable storage does not block inference',async()=>{
+  const previous=globalThis.caches,bytes=new TextEncoder().encode('weights'),sha256=Buffer.from(await crypto.subtle.digest('SHA-256',bytes)).toString('hex');
+  const manifest={version:'new',files:{model:{bytes:bytes.length,sha256}}};let downloads=0;
+  const fetcher=async()=>{downloads++;return new Response(bytes);};
+  try{
+    globalThis.caches={open:async()=>null,match:async()=>new Response(bytes)};
+    assert.deepEqual(await createAssetLoader('https://example.invalid/',manifest,()=>{},fetcher)('model'),bytes);assert.equal(downloads,0);
+    globalThis.caches={open:async()=>null,match:async()=>new Response('corrupt')};
+    assert.deepEqual(await createAssetLoader('https://example.invalid/',manifest,()=>{},fetcher)('model'),bytes);assert.equal(downloads,1);
+    globalThis.caches={open:async()=>{throw Error('denied');},match:async()=>{throw Error('denied');}};
+    assert.deepEqual(await createAssetLoader('https://example.invalid/',manifest,()=>{},fetcher)('model'),bytes);assert.equal(downloads,2);
+  }finally{if(previous===undefined)delete globalThis.caches;else globalThis.caches=previous;}
+});

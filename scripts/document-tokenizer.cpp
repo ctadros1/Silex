@@ -1,5 +1,6 @@
 // Silex's small UDPipe adapter. UDPipe itself is MPL-2.0.
-// Only trained sentence/token segmentation runs here, not dependency parsing.
+// Trained token, morphology and dependency annotations supplement AMR's
+// missing articles and tense. They do not supply the semantic graph itself.
 #include "udpipe.h"
 #include <emscripten/bind.h>
 #include <sstream>
@@ -12,7 +13,7 @@ bool initModel(const std::string& path) {
 }
 std::string segmentDocument(const std::string& text) {
   if (!current_model) throw std::runtime_error("Document tokenizer is not loaded.");
-  pipeline pipe(current_model, "tokenizer=ranges", pipeline::NONE, pipeline::NONE, "conllu");
+  pipeline pipe(current_model, "tokenizer=ranges", pipeline::DEFAULT, pipeline::DEFAULT, "conllu");
   std::istringstream input(text);
   std::ostringstream output;
   std::string error;

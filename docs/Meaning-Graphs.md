@@ -1,3 +1,7 @@
+# Legacy graph-and-source images
+
+This historical format remains decodable. Normal translation no longer generates it: it copied source wording and verbose metadata, which defeated semantic compression. See [Semantic Compression](Semantic-Compression.md) for the current format.
+
 # Silex meaning graphs, version 1
 
 This is a declared interpretation convention within the original Silex v1 wire grammar. It adds no physical glyphs. A core decoder recovers a `PAIR` value; a graph-aware decoder interprets that value using the following schema. Reading the graph requires shared AMR concepts, PropBank frame roles, English grounding, and context. It does not require the encoder model or a per-message database.

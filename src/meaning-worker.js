@@ -1,7 +1,8 @@
 import {BartTokenizer,AutoModelForSeq2SeqLM,Text2TextGenerationPipeline,env,TextStreamer} from '@huggingface/transformers';
-import {parseAmrSerial} from './meaning-graph.js';
 import {documentSegments} from './document-segments.js';
 import {createAssetLoader} from './model-assets.js';
+import {taggedSentences} from './semantic-features.js';
+import {interpretStatements} from './document-interpreter.js';
 let parser,tokenizer,loadAssets,ready;
 const base=new URL('../models/meaning-model/',import.meta.url);
 function progress(detail){self.postMessage({type:'progress',...detail});}
@@ -43,14 +44,13 @@ self.onmessage=async event=>{
   const {id,text}=event.data;
   try{
     await initialize();
-    const sources=documentSegments(text,tokenizer.segmentDocument(text)),parts=[];
-    for(let i=0;i<sources.length;i++){
-      progress({stage:`Interpreting statement ${i+1} of ${sources.length}…`,detail:'A trained meaning parser is building concepts and their relations.',sentence:i+1,total:sources.length});
+    const conllu=tokenizer.segmentDocument(text),sources=documentSegments(text,conllu),tagged=taggedSentences(conllu);
+    const parts=await interpretStatements(sources,tagged,async (source,i)=>{
       let tokens=0;
       const streamer=new TextStreamer(parser.tokenizer,{skip_prompt:true,skip_special_tokens:true,callback_function:()=>{if(++tokens%8===0)progress({stage:`Interpreting statement ${i+1} of ${sources.length}…`,detail:`${tokens} generated pieces · working on this device`});}});
-      const result=await parser(sources[i].trim(),{max_new_tokens:1024,num_beams:1,do_sample:false,streamer});
-      parts.push({source:sources[i],graph:parseAmrSerial(result[0].generated_text.trim())});
-    }
+      const result=await parser(source,{max_new_tokens:1024,num_beams:1,do_sample:false,streamer});
+      return result[0].generated_text.trim();
+    },({index,total,cached})=>progress({stage:`${cached?'Reusing the meaning of':'Interpreting'} statement ${index+1} of ${total}…`,detail:'Every statement occurrence remains in the message.',sentence:index+1,total}));
     self.postMessage({type:'result',id,parts});
   }catch(error){console.error('Silex meaning worker:',error.stack);self.postMessage({type:'error',id,message:error.message});}
 };

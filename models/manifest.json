@@ -1,5 +1,5 @@
 {
-  "version": "meaning-model-v0.1.0",
+  "version": "meaning-model-v0.1.1",
   "files": {
     "config.json": {
       "bytes": 1267,
@@ -121,7 +121,7 @@
     },
     "document-tokenizer.wasm": {
       "bytes": 499868,
-      "sha256": "2a5461efca9074c3e284873c6ddeaa47effd007e99f23a386daa41c72dc6da70"
+      "sha256": "b5762e6ab2efe1e894940b55137fa06e73b1dd907ac837590f35662c0126b92b"
     },
     "ort-wasm-simd-threaded.jsep.mjs": {
       "bytes": 46851,

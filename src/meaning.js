@@ -1,4 +1,4 @@
-import {encodeMeaningDocument} from './meaning-graph.js';
+import {compileMeaning} from './semantic-compiler.js';
 let worker,active,sequence=0;
 export function cancel(){worker?.terminate();worker=null;active?.reject(new Error('Translation stopped.'));active=null;}
 export function analyze(text,language='en',onProgress=()=>{},original=null){
@@ -13,7 +13,7 @@ export function analyze(text,language='en',onProgress=()=>{},original=null){
       const data=event.data;if(data.type==='progress'){onProgress(data);return;}if(data.id!==active?.id)return;
       active=null;
       if(data.type==='error'){worker.terminate();worker=null;reject(new Error(data.message));return;}
-      try{resolve({ast:encodeMeaningDocument(data.parts,language,original),method:'Trained on-device meaning parser',assumptions:[...data.parts.flatMap(p=>p.graph.warnings||[]),'This is the model’s AMR interpretation. AMR does not fully formalize tense, articles, or quantifier scope; the image also preserves every source word and punctuation piece for review.']});}catch(e){reject(e);}
+      try{resolve(compileMeaning(data.parts));}catch(e){reject(e);}
     };
     worker.postMessage({id,text});
   });

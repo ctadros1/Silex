@@ -4,6 +4,8 @@ import * as ai from './ai.js';
 import * as meaning from './meaning.js';
 import {decodeMeaningDocument,literalGraphReading,graphPieceMap,dictionaryGlyphSpan} from './meaning-graph.js';
 import {unpackMeaning} from './lexicon.js';
+import {decodeCompactGraphs,compactPieceMap} from './compact-graph.js';
+import {semanticReading,semanticKnownReading,documentStatements} from './semantic-compiler.js';
 const $=id=>document.getElementById(id);
 const state={ast:null,cells:null,frame:null,encoded:null,selected:0,page:0,reverse:false,revision:0,busy:false,job:0,modelLoading:false,modelReady:false,lastText:null,sourceLanguage:'en',forwardLanguage:'en'};
 let progressTimer,startedAt=0;
@@ -40,16 +42,16 @@ function syncMode(){
 function count(){$('character-count').textContent=`${$('source-text').value.length.toLocaleString()} / ${$('source-text').maxLength.toLocaleString()}`;}
 function updateExampleLabels(){const language=$('source-language').value;for(const e of EXAMPLES)$('examples').options[e.id+1].textContent=e.text[language]||e.text.en;}
 function showAnalysis(ast,{method='Local decoding',assumptions=[],frame=null,source=null}={}){
-  state.ast=ast;state.graph=decodeMeaningDocument(ast);state.graphPieces=state.graph?graphPieceMap(state.graph):null;state.encoded=encode(ast);state.selected=0;state.page=0;
+  state.ast=ast;state.graph=decodeMeaningDocument(ast)||decodeCompactGraphs(ast);state.graphPieces=state.graph?(state.graph.profile==='g2/1'?compactPieceMap(state.graph):graphPieceMap(state.graph)):new Map();for(const item of documentStatements(ast)||[]){const g=decodeCompactGraphs(item);if(g)for(const [field,piece] of compactPieceMap(g))state.graphPieces.set(field,piece);}state.encoded=encode(ast);state.selected=0;state.page=0;
   if(frame){state.frame=frame;state.cells=frame.cells;}else{const words=packet(state.encoded.words),l=layout(words.length);state.cells=grid(words,l.cols);state.frame={profile:1,cols:l.cols,rows:l.rows,packetLength:words.length};}
   // Header length is counted from the self-delimiting body-word count.
   if(!frame){let i=1;const words=packet(state.encoded.words);while(words[i++]>=32){}state.frame.bodyStart=i;}
   $('explanation').hidden=false;$('fallback').hidden=true;
-  $('literal-reading').textContent=state.graph?literalGraphReading(state.graph):literalEnglish(ast);$('source-reading').textContent=state.graph?'Preserved source words: '+state.graph.source:'';
+  $('literal-reading').textContent=state.graph?.source?literalGraphReading(state.graph):semanticReading(ast);$('source-reading').textContent=state.graph?.source?'Legacy image: stored source wording — '+state.graph.source:'';
   $('translation-method').textContent=`${method}${method==='On-device AI'?' · Review this interpretation.':''}${source?' · Source: '+source:''}`;
   $('expression').textContent=notation(ast);
   const container=$('assumptions');container.replaceChildren();if(assumptions.length){const list=document.createElement('ul');for(const text of [...new Set(assumptions)]){const li=document.createElement('li');li.textContent=text;list.append(li);}container.append(list);}
-  $('frame-details').textContent=`${state.encoded.words.length} body glyphs (${state.encoded.words.length*6} syntax bits). ${state.cells[0].length} × ${state.cells.length} modules including border, margin, length, checksum, and padding. Profile ${state.frame.profile}. The graph profile declares its dictionary and source language inside the image; no external sidecar is needed.`;
+  $('frame-details').textContent=`${state.encoded.words.length} body glyphs (${state.encoded.words.length*6} syntax bits). ${state.cells[0].length} × ${state.cells.length} modules including border, margin, length, checksum, and padding. Profile ${state.frame.profile}. Normal images contain native meaning symbols or a compact semantic graph. Local concept declarations are counted; shared codes use the published codebook. Source words and formatting are excluded.`;
   $('compression-note').textContent=state.frame.profile===2?'This uploaded frame is compressed. Its words are recovered locally before interpretation. Individual heads share compressed bits, so the highlighted pieces appear in a reconstructed direct frame below; they cannot be assigned separate rectangles in the compressed original.':'The highlighted words occupy the exact displayed positions in the complete direct frame. The first words are framing information; the last words are checksum and zero padding.';
   renderGlyphs();renderTree();renderImages();const meaning=unpackMeaning(ast).content;selectPiece(state.encoded.records.find(r=>r.kind==='head'&&r.node===meaning)?.index||0);
   for(const id of ['download-png','copy-image','download-svg','copy-text'])$(id).disabled=false;
@@ -74,7 +76,7 @@ function renderTree(){
       row(g.record,`Statement ${g.statementIndex+1}`);
       for(const n of g.nodes)row(n.field,`n${n.id}: ${n.concept}`,1);
       for(const e of g.edges)row(e.fields[1],`n${e.source} → ${e.role} → ${e.target.kind==='node'?'n'+e.target.id:JSON.stringify(e.target.value)}`,1);
-      const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Source words and punctuation';details.append(summary);tree.append(details);
+      if(!g.atoms.length)continue;const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Legacy stored source words';details.append(summary);tree.append(details);
       for(const a of g.atoms){const b=document.createElement('button');b.className='tree-row';b.textContent=a.form;const r=state.encoded.records.find(r=>r.kind==='head'&&r.node===a.fields[1]);b.addEventListener('click',()=>selectPiece(r.index));details.append(b);}
     }
     return;
@@ -113,7 +115,7 @@ async function translate(){
         english=await ai.translateText(text,source,'en',modelActivity);
       }
       if(revision!==state.revision)return;
-      analysis=await meaning.analyze(english,'en',report=>{if(job===state.job&&revision===state.revision){message(report.stage);$('translation-detail').textContent=report.detail;state.progressDetail=true;}},source==='en'?null:{language:source,text});
+      analysis=await meaning.analyze(english,'en',report=>{if(job===state.job&&revision===state.revision){message(report.stage);$('translation-detail').textContent=report.detail;state.progressDetail=true;}});
       if(source!=='en')analysis.assumptions.unshift('The meaning parser analyzed this local English translation: '+english);
     }
     if(revision!==state.revision||job!==state.job)return;
@@ -125,12 +127,12 @@ async function translate(){
 async function reverseReading(){
   if(!state.ast)return;const ast=state.ast,target=$('target-language').value,revision=state.revision,job=++state.job;busy(true);message('Reading the decoded expression…');$('result-text').textContent='';$('copy-text').disabled=true;
   try{
-    const graph=decodeMeaningDocument(ast);let result=graph&&target===graph.language?graph.source:graph&&target===graph.interpretationLanguage?graph.documents.map(d=>d.source).join(''):knownReading(ast,target),generated=false;
+    const graph=decodeMeaningDocument(ast);let result=graph&&target===graph.language?graph.source:graph&&target===graph.interpretationLanguage?graph.documents.map(d=>d.source).join(''):semanticKnownReading(ast,target),generated=false;
     if(graph&&!result&&ai.isReady()){message('Translating the preserved source words locally…');result=await ai.translateText(graph.source,graph.language,target,modelActivity);generated=true;}
     if(!graph&&!result && ai.isReady()){message('Translating the decoded meaning on your device…');result=await ai.translateReading(ast,target,modelActivity);generated=true;}
-    if(!graph&&!result && target==='en'&&ast.op!=='TEXT')result=literalEnglish(ast);
+    if(!graph&&!result && target==='en'&&ast.op!=='TEXT')result=semanticReading(ast);
     if(revision!==state.revision||job!==state.job)return;
-    if(result){$('result-text').textContent=result;$('copy-text').disabled=false;message(generated?'Translated on your device. Review the English literal reading below.':graph&&target===graph.language?'Image decoded locally. Exact source words recovered; inspect the meaning graph below.':knownReading(ast,target)?'Image decoded and translated locally.':'Image decoded locally. This is the structural English reading; enable AI for a natural sentence.');}
+    if(result){$('result-text').textContent=result;$('copy-text').disabled=false;message(generated?'Translated on your device. Review the English literal reading below.':graph&&target===graph.language?'Image decoded locally. Exact source words recovered; inspect the meaning graph below.':semanticKnownReading(ast,target)?'Meaning decoded and translated locally. Original wording is not stored.':'Image decoded locally. This is the structural English reading; enable AI for a natural sentence.');}
     else if(ast.op==='TEXT'){$('result-text').textContent=ast.value;$('copy-text').disabled=false;message('Exact wording recovered. Enable on-device AI to translate it into the selected language.');}
     else{$('result-text').textContent='Enable on-device AI to translate this meaning into '+(LANGUAGES.find(l=>l.code===target)?.name||target)+'.';message('The image is decoded. Its complete literal reading is shown below.');}
   }catch(e){if(job===state.job)message(e.message,true);}finally{if(job===state.job)busy(false);}
@@ -145,8 +147,8 @@ async function acceptImage(file){
 }
 async function swap(){
   if(state.busy)return;
-  if(state.reverse){const target=$('target-language').value,g=state.ast?decodeMeaningDocument(state.ast):null,text=g&&target===g.language?g.source:state.ast?knownReading(state.ast,target):null;$('source-language').value=target;$('target-language').value='silex';syncMode();invalidate();updateExampleLabels();if(text)$('source-text').value=text;count();if(text)await translate();else message('Enter a sentence in the selected input language.');}
-  else{const cells=state.cells;state.revision++;$('source-language').value='silex';$('target-language').value=state.forwardLanguage;syncMode();if(cells){const blob=await pngBlob(cells,12);await acceptImage(new File([blob],'silex.png',{type:'image/png'}));}else{invalidate();message('Choose a Silex image to decode.');}}
+  if(state.reverse){const target=$('target-language').value,g=state.ast?decodeMeaningDocument(state.ast):null,text=g&&target===g.language?g.source:state.ast?semanticKnownReading(state.ast,target)||$('result-text').textContent:null;$('source-language').value=target;$('target-language').value='silex';syncMode();invalidate();updateExampleLabels();if(text)$('source-text').value=text;count();if(text)await translate();else message('Enter a sentence in the selected input language.');}
+  else{const cells=state.cells;state.revision++;$('source-language').value='silex';$('target-language').value=state.forwardLanguage;syncMode();if(cells){const blob=await pngBlob(cells,Number($('image-scale').value));await acceptImage(new File([blob],'silex.png',{type:'image/png'}));}else{invalidate();message('Choose a Silex image to decode.');}}
 }
 function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),15000);}
 function localAction(fn){return async()=>{try{await fn();}catch(e){message(e.message,true);}};}
@@ -161,7 +163,7 @@ $('source-language').addEventListener('change',()=>{
   if(LANGUAGES.some(l=>l.code===source))state.forwardLanguage=source;
   if(source==='expression')$('source-text').value='(SEE ME YOU)';else if(previous&&previous.text[source])$('source-text').value=previous.text[source];count();message(source==='silex'?'Choose a Silex image to decode.':'Press Translate to use the selected language.');
 });
-$('target-language').addEventListener('change',()=>{if($('target-language').value==='silex'){$('source-language').value=state.sourceLanguage==='silex'?'en':state.sourceLanguage;syncMode();invalidate();message('Enter a sentence to translate.');}else{if(!state.reverse){const target=$('target-language').value;$('source-language').value='silex';syncMode();$('target-language').value=target;if(state.cells){const cells=state.cells;pngBlob(cells,12).then(blob=>acceptImage(new File([blob],'silex.png',{type:'image/png'})));}else{invalidate();message('Choose a Silex image to decode.');}}else{state.revision++;reverseReading();}}});
+$('target-language').addEventListener('change',()=>{if($('target-language').value==='silex'){$('source-language').value=state.sourceLanguage==='silex'?'en':state.sourceLanguage;syncMode();invalidate();message('Enter a sentence to translate.');}else{if(!state.reverse){const target=$('target-language').value;$('source-language').value='silex';syncMode();$('target-language').value=target;if(state.cells){const cells=state.cells;pngBlob(cells,Number($('image-scale').value)).then(blob=>acceptImage(new File([blob],'silex.png',{type:'image/png'})));}else{invalidate();message('Choose a Silex image to decode.');}}else{state.revision++;reverseReading();}}});
 $('examples').addEventListener('change',()=>{if($('examples').value==='')return;const e=EXAMPLES[Number($('examples').value)];$('source-text').value=e.text[$('source-language').value]||e.text.en;invalidate();count();translate();});
 $('exact-text').addEventListener('click',()=>{if(!$('source-text').value)return;const analysis=preserve($('source-text').value);showAnalysis(analysis.ast,analysis);state.lastText=$('source-text').value;message('Every character is preserved as exact text. Check the TEXT explanation below.');});
 $('image-scale').addEventListener('change',renderImages);

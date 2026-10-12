@@ -15,8 +15,10 @@ export function createAssetLoader(base,manifest,onProgress=()=>{},fetcher=fetch)
     let loaded=0;const whole=new Uint8Array(record.bytes);
     for(const chunk of chunks){
       const url=new URL(chunk.path,base).href;
-      let response=await cache?.match(url),bytes;
-      if(response){try{bytes=await verifiedBytes(response,chunk);}catch{await cache.delete(url);}}
+      // Reuse unchanged, hash-verified weights across tokenizer releases.
+      let response,bytes;
+      try{response=await cache?.match(url)||await globalThis.caches?.match(url);}catch{/* Browser storage may be unavailable. */}
+      if(response){try{bytes=await verifiedBytes(response,chunk);}catch{try{await cache?.delete(url);}catch{/* Fetch a verified replacement. */}}}
       if(!bytes){bytes=await verifiedBytes(await fetcher(url),chunk);try{await cache?.put(url,new Response(bytes));}catch{/* Storage quota failure does not invalidate inference. */}}
       whole.set(bytes,loaded);loaded+=bytes.length;totals.set(name,loaded);
       onProgress({asset:name,loaded,total:record.bytes,completed:[...totals.values()].reduce((a,b)=>a+b,0)});

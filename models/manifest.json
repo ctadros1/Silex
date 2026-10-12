@@ -1,0 +1,147 @@
+{
+  "version": "meaning-model-v0.1.0",
+  "files": {
+    "config.json": {
+      "bytes": 1267,
+      "sha256": "0c18964db0c0eb34128410be455cb26d482b31fa482928e819e15a5c42d6d5bb"
+    },
+    "generation_config.json": {
+      "bytes": 309,
+      "sha256": "e44d35df729d71929d1deb83135c8cf823cb3490d7ca0e17e8f79b04a961eec7"
+    },
+    "merges.txt": {
+      "bytes": 456318,
+      "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5"
+    },
+    "special_tokens_map.json": {
+      "bytes": 957,
+      "sha256": "8293ae960b0a0852d4d3813118030a1149a3ed9fe37bc2e1e7b3c2e62eb2d4b7"
+    },
+    "tokenizer.json": {
+      "bytes": 3558642,
+      "sha256": "2bb1a22cfbe25b8e5a232b7fc4d7fc5073923b45724a5f813b00811bb6620f66"
+    },
+    "tokenizer_config.json": {
+      "bytes": 1270,
+      "sha256": "555ab8b0e72c6d1976ecca612b8718ffa02bc1277fd066e627f202bde5b9c772"
+    },
+    "vocab.json": {
+      "bytes": 798293,
+      "sha256": "ed19656ea1707df69134c4af35c8ceda2cc9860bf2c3495026153a133670ab5e"
+    },
+    "onnx/encoder_model_quantized.onnx": {
+      "bytes": 82260974,
+      "sha256": "b2144abd38378dbfdacb1ba62e7e34d3d2350536e1a4c86af32b261e37918589",
+      "chunks": [
+        {
+          "path": "shards/onnx_encoder_model_quantized.onnx.000.bin",
+          "bytes": 16777216,
+          "sha256": "c749baa2c937347f5a84f1a73fbc79fd4527003f919c4a6bc55e250fde58dbc6"
+        },
+        {
+          "path": "shards/onnx_encoder_model_quantized.onnx.001.bin",
+          "bytes": 16777216,
+          "sha256": "caf14e583dd73864c5ace626b62e3e9d419b3723103ff4175014baf3dd94d0b2"
+        },
+        {
+          "path": "shards/onnx_encoder_model_quantized.onnx.002.bin",
+          "bytes": 16777216,
+          "sha256": "fd1ae1ad024c0c61c6bb81583c1f7202c44578053041e4aa84dd9a88bab0e1c8"
+        },
+        {
+          "path": "shards/onnx_encoder_model_quantized.onnx.003.bin",
+          "bytes": 16777216,
+          "sha256": "e9db4ae8a8a75ef43b32f6478f12b87b221f4e8fa15a90d390aeed4cc18cd815"
+        },
+        {
+          "path": "shards/onnx_encoder_model_quantized.onnx.004.bin",
+          "bytes": 15152110,
+          "sha256": "19ee99810540bd7fc9c0fb864623a6857f1650fc956c418a36f603229a49fa1d"
+        }
+      ]
+    },
+    "onnx/decoder_model_merged_quantized.onnx": {
+      "bytes": 135870763,
+      "sha256": "aa289d07de5ddc7019638b4aada3fed3133301589ea846581dedf4b740122dd9",
+      "chunks": [
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.000.bin",
+          "bytes": 16777216,
+          "sha256": "8ae846a008a548e7d148a7bf474b60c59e075b6b502896b65c9a12cecf96f730"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.001.bin",
+          "bytes": 16777216,
+          "sha256": "518044b41d1a31275f48cf721f57ac51cd8c178ef49cacad9fd0b1cc8b66fafd"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.002.bin",
+          "bytes": 16777216,
+          "sha256": "1732af7741fbf7956b117600815d1a61b3726844f2449dbb571bcdac5be87b90"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.003.bin",
+          "bytes": 16777216,
+          "sha256": "d41931f74030487701c5c98f742aea501c688e6d61b6bc9f9263fea63dbf1ab9"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.004.bin",
+          "bytes": 16777216,
+          "sha256": "27d90350a5668d9a711f42e23e830e6e148776dde37f21a3395beb63cfc9a26d"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.005.bin",
+          "bytes": 16777216,
+          "sha256": "cf916e5cc3b1144819f93f52bc32e01f81b378d6860a1f6c4a30876210ee2b1b"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.006.bin",
+          "bytes": 16777216,
+          "sha256": "312bed395c73799d1fb5e7d9b4bfddab22b74fad96ef753b7fbc878d63d26c40"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.007.bin",
+          "bytes": 16777216,
+          "sha256": "2e5ff9f0264735336e3e4ce1cd3b2667f60098902964498bfec68e5352ab282a"
+        },
+        {
+          "path": "shards/onnx_decoder_model_merged_quantized.onnx.008.bin",
+          "bytes": 1653035,
+          "sha256": "4070a6f341cfea954a06541cadb7d473b099d084290e1c2e2f2f5efcdd7a8748"
+        }
+      ]
+    },
+    "english.udpipe": {
+      "bytes": 16368326,
+      "sha256": "20432a6f87b1f258927207b8fbd2dc21ebff9722b381b7a36cef34c8c9a380dc"
+    },
+    "document-tokenizer.mjs": {
+      "bytes": 75972,
+      "sha256": "a094becc0644e41e3ba65204c5b4f059331b5554c52a2deb2f738d01a0ce7b8a"
+    },
+    "document-tokenizer.wasm": {
+      "bytes": 499868,
+      "sha256": "2a5461efca9074c3e284873c6ddeaa47effd007e99f23a386daa41c72dc6da70"
+    },
+    "ort-wasm-simd-threaded.jsep.mjs": {
+      "bytes": 46851,
+      "sha256": "c2f80e915e9df63289788a99d434d8c4e00e64e9c1f030f4b80b022458dd2c99"
+    },
+    "ort-wasm-simd-threaded.jsep.wasm": {
+      "bytes": 28352885,
+      "sha256": "62ff86b2f2fa3a79eb87a7e4720e8ea9051942bf975f314181bf7dcef2feac06",
+      "chunks": [
+        {
+          "path": "shards/ort-wasm-simd-threaded.jsep.wasm.000.bin",
+          "bytes": 16777216,
+          "sha256": "919f934da525084c31a1b01a2ef6e68964fe7d8104d77a3a64e4afc1b6af96db"
+        },
+        {
+          "path": "shards/ort-wasm-simd-threaded.jsep.wasm.001.bin",
+          "bytes": 11575669,
+          "sha256": "d2dc91061f748a06d385df62ca6878de14b1d938316c8e373974c2913f29f199"
+        }
+      ]
+    }
+  }
+}

@@ -1,4 +1,6 @@
-# Converter lexical packages, version 1
+# Legacy lexical packages
+
+This convention remains supported for existing formal-expression images. The current text translator uses [Meaning Graphs](Meaning-Graphs.md). The grammar and model-tree compiler described below are compatibility components, not the forward text-translation pipeline., version 1
 
 This convention belongs to the converter's declared semantic model. It uses the unchanged Silex v1 syntax and physical framing. A bare v1 decoder recovers the same finite tree; it is not expected to infer the convention without this document.
 
@@ -27,7 +29,7 @@ The converter generates direct profile 1 images, which permits exact glyph/subtr
 
 The 64 heads are grammatical primitives, not an exhaustive inventory of words. Predicate signatures and sense definitions are open; they can represent new objects, actions, events, relationships, technical terms, and proposition-level operators. Named translation variables compile to the core language's de Bruijn distances, including REF for deeper scope. Repeated clauses compose through quantifiers, conjunction, implication, attitude operators, functions, and paid predicates. Resource ceilings in this web implementation can be raised or a document split across frames; they are not linguistic vocabulary boundaries.
 
-The converter uses a deterministic English grammar for familiar constructions. For new words it can ask the on-device model only for contextual senses and inflections, then compile the structure itself. Other structures use a nested meaning tree with ordinary entity descriptions and explicit clause relationships. The compiler generates the CALLs and bindings and validates the result before encoding. Unused proposed declarations are excluded; only predicates actually constructed by the compiler are transmitted. The actual used content is checked for omitted English content words, negation, universal quantification, future tense, and questions. This is an omission guard, not a semantic equivalence proof: incorrect roles, word senses, attachment or quantifier scope may still pass. Ambiguity choices are shown for review.
+The legacy compiler uses a deterministic English grammar for familiar constructions. For new words it can ask the on-device model only for contextual senses and inflections, then compile the structure itself. Other structures use a nested meaning tree with ordinary entity descriptions and explicit clause relationships. The compiler generates the CALLs and bindings and validates the result before encoding. Unused proposed declarations are excluded; only predicates actually constructed by the compiler are transmitted. The actual used content is checked for omitted English content words, negation, universal quantification, future tense, and questions. This is an omission guard, not a semantic equivalence proof: incorrect roles, word senses, attachment or quantifier scope may still pass. Ambiguity choices are shown for review.
 
 No automatic TEXT fallback is counted as successful semantic translation. Exact wording is an explicit, separate user action. Literal payloads inside a semantic expression remain appropriate for names, numbers, and actual quoted speech.
 
@@ -35,6 +37,6 @@ Natural language does not uniquely determine one formal meaning, even with valid
 
 ## Meaning-tree compiler
 
-The local model may return a nested array such as `["see", ["every", "child"], ["a", "bird"]]`. The compiler lifts noun phrase scope from left to right, constructs `(ALL (CHILD V0) (SOME (BIRD V0) (SEE V1 V0)))`, and derives the visual glyphs from that tree. Explicit named scopes can select a different order, for example `["some", "$bird", ["bird", "$bird"], ["all", "$child", ["child", "$child"], ["see", "$child", "$bird"]]]`. These are translation intermediates, not another wire format.
+The legacy meaning-tree interface accepts a nested array such as `["see", ["every", "child"], ["a", "bird"]]`. The compiler lifts noun phrase scope from left to right, constructs `(ALL (CHILD V0) (SOME (BIRD V0) (SEE V1 V0)))`, and derives the visual glyphs from that tree. Explicit named scopes can select a different order, for example `["some", "$bird", ["bird", "$bird"], ["all", "$child", ["child", "$child"], ["see", "$child", "$bird"]]]`. These are translation intermediates, not another wire format.
 
 New definitions have a source-word name, kind (noun, adjective, relation), ordered roles, and a specific contextual sense. The compiler constructs the corresponding namespaced SYMBOL/CALL expressions automatically. It may retain vocabulary definitions supplied during an earlier grammar attempt so a later meaning-tree attempt does not lose noun meanings. Missing object/role signatures in vocabulary generation get a targeted repair request; they do not authorize inventing an omitted participant.

@@ -1,9 +1,11 @@
 # Deployment
 
-The converter is a static-assets Cloudflare Worker named `silex-converter`. Its single route is `project.christiantadros.com/silex-converter*`, on the `christiantadros.com` zone. Assets live at `dist/silex-converter/`, preserving the prefix for scripts, workers, styles, and reference files. HTML handling redirects the bare path to its trailing-slash directory; the canonical identifies the requested base path.
+The converter is a static-assets Cloudflare Worker named `silex-converter`. Its single route is `project.christiantadros.com/silex-converter*`. Assets live under `dist/silex-converter/`, including scripts, inference workers, model shards, styles, and reference files. The bare converter path redirects to the directory’s trailing-slash URL.
 
-There are no runtime bindings, secrets, databases, buckets, upload handlers, or inference endpoints. Caching of model files occurs in the browser. The default hosting limits/plan still apply to static assets; this design creates no server storage for visitors' images.
+There are no runtime bindings, inference endpoints, secrets, databases, buckets, upload handlers, or visitor-image storage. Translation and image decoding run in the browser. Ordinary static hosting limits still apply to downloaded model files.
 
-Run `npm ci`, `npm test`, and `npm run build` before `npx wrangler deploy`. Source changes are published to the public `ctadros1/Silex` repository. GitHub Actions tests and builds the converter on pushes and pull requests; it does not hold deployment credentials or automatically deploy.
+Run `npm ci`, `npm run prepare-model`, `npm test`, and `npm run build` before `npx wrangler deploy`. The prepared model release must exist before another checkout runs `prepare-model`; its manifest pins asset sizes and SHA-256 digests. Large ONNX/WASM assets are split into 16 MiB files and assembled locally in the browser.
 
-Model weights are pinned to Hugging Face revision `44b42469f9e192814bfd90440e3b377d89ba7a13`. The compiled model library is pinned to binary-mlc-llm-libs revision `00fe7a40e57e5e8eb9fef87526a4bf28ad5846c0`. The inference runtime and build/deploy dependencies are pinned in the lockfile.
+GitHub Actions verifies the source, prepared assets, unit tests, and build on pushes and pull requests. It does not hold deployment credentials or deploy automatically. To host elsewhere, update `wrangler.jsonc` with that account and route.
+
+The AMR model, English segmentation model, runtime assets, and optional multilingual model are pinned and attributed in [Model Preparation](Model-Preparation.md) and [Third-Party Notices](../THIRD-PARTY-NOTICES.md).

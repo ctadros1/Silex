@@ -6,7 +6,8 @@ const root=path.dirname(fileURLToPath(import.meta.url));
 const output=path.join(root,'dist','silex-converter');
 // This directory contains this build's disposable output only.
 await rm(path.join(root,'dist'),{recursive:true,force:true});await mkdir(path.join(output,'assets'),{recursive:true});
-await build({absWorkingDir:root,entryPoints:{app:'src/app.js','ai-worker':'src/ai-worker.js'},outdir:path.join(output,'assets'),bundle:true,splitting:true,format:'esm',platform:'browser',target:['chrome121','safari18'],minify:true,chunkNames:'chunks/[name]-[hash]',logLevel:'info'});
+await build({absWorkingDir:root,entryPoints:{app:'src/app.js','ai-worker':'src/ai-worker.js','meaning-worker':'src/meaning-worker.js'},outdir:path.join(output,'assets'),bundle:true,splitting:true,format:'esm',platform:'browser',target:['chrome121','safari18'],minify:true,chunkNames:'chunks/[name]-[hash]',logLevel:'info'});
+await cp(path.join(root,'.parser-cache','browser-model'),path.join(output,'models','meaning-model'),{recursive:true});
 await cp(path.join(root,'src','index.html'),path.join(output,'index.html'));
 await cp(path.join(root,'src','style.css'),path.join(output,'assets','style.css'));
 await cp(path.join(root,'reference'),path.join(output,'reference'),{recursive:true});

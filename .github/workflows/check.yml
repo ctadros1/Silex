@@ -13,4 +13,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: node scripts/prepare-model.mjs --native
+      - run: node scripts/check-meaning-model.mjs
       - run: npm run build

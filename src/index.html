@@ -13,7 +13,7 @@
   <header class="topbar"><a class="brand" href="./"><strong>Silex</strong><span>/ Converter</span></a><a href="https://christiantadros.com/projects" class="back">← Back to projects</a></header>
   <main>
     <h1>Silex Converter</h1>
-    <p class="lead">Translate a sentence. See exactly how it becomes an image.</p>
+    <p class="lead">Translate text. See exactly how it becomes an image.</p>
     <section class="translator" aria-label="Translator">
       <div class="languages">
         <label><span class="sr-only">Input language</span><select id="source-language" aria-label="Input language"></select></label>
@@ -23,7 +23,7 @@
       <div class="panels">
         <div class="input-panel">
           <div id="sentence-input">
-            <label for="source-text" class="sr-only">Sentence to translate</label>
+            <label for="source-text" class="sr-only">Text to translate</label>
             <textarea id="source-text" maxlength="1200" spellcheck="false" dir="auto" placeholder="Enter a sentence…">I see the red bird.</textarea>
             <div class="input-actions"><label class="example-label"><span class="sr-only">Try an example</span><select id="examples" aria-label="Try an example"><option value="">Try an example</option></select></label><span id="character-count" class="subtle"></span></div>
           </div>
@@ -39,6 +39,13 @@
           <div class="translate-row"><span id="input-hint" class="subtle"></span><button id="translate" class="button primary">Translate</button><button id="stop" class="button" hidden>Stop</button></div>
         </div>
         <div class="output-panel">
+          <div id="translation-progress" class="translation-progress" hidden>
+            <span class="translation-spinner" aria-hidden="true"></span>
+            <strong id="translation-stage">Translating…</strong>
+            <span id="translation-elapsed" class="subtle">0s elapsed</span>
+            <div class="translation-activity" role="progressbar" aria-label="Translation in progress"><span></span></div>
+            <p id="translation-detail" class="subtle">Working on this device.</p>
+          </div>
           <div id="result-image" class="result-image"></div>
           <p id="result-text" class="result-text" dir="auto" hidden></p>
           <div id="image-actions" class="export-actions"><button id="download-png" class="button">↓ Download PNG</button><button id="copy-image" class="button">Copy image</button><button id="download-svg" class="button">SVG</button></div>
@@ -48,16 +55,16 @@
       </div>
     </section>
     <p id="status" class="status" role="status" aria-live="polite"></p>
-    <div id="fallback" class="fallback" hidden><span>This sentence needs on-device AI. You can also preserve every character as an exact Silex text literal.</span><button id="exact-text" class="button">Preserve exact wording</button></div>
+    <div id="fallback" class="fallback" hidden><span id="fallback-message">Enable on-device AI for this sentence, or preserve its exact wording separately.</span><button id="exact-text" class="button">Preserve exact wording</button></div>
     <section class="model-row" aria-label="On-device AI">
-      <div><strong>More sentences</strong><span>Use on-device AI.</span></div>
+      <div><strong>Other languages</strong><span>Optional on-device language model.</span></div>
       <button id="load-model" class="button">Download model (~2.4 GB)</button><button id="unload-model" class="button quiet" hidden>Turn off AI</button>
       <p>Model files download once; your sentences and images stay in this browser.</p>
       <progress id="model-progress" max="1" value="0" hidden aria-label="Model download progress"></progress><span id="model-status" class="subtle"></span>
     </section>
     <section id="explanation" class="explanation" aria-labelledby="explanation-title">
       <h2 id="explanation-title">How this translation fits together</h2>
-      <p class="reading"><strong>Literal reading:</strong> <span id="literal-reading"></span></p>
+      <p class="reading"><strong>Literal reading:</strong> <span id="literal-reading"></span></p><p id="source-reading" class="source-reading"></p>
       <p id="translation-method" class="subtle"></p>
       <div class="explanation-grid">
         <div class="pieces-column">
@@ -77,8 +84,8 @@
       <div id="assumptions" class="assumptions"></div>
     </section>
     <footer>
-      <details><summary>Privacy</summary><p>Image files are read with the browser’s local file APIs. There is no upload endpoint, server inference, account, or image storage. The page has no analytics. AI runs on your GPU after downloading public model files from Hugging Face and GitHub; those hosts receive ordinary download requests, not your sentences or images. Browser caching uses storage on your device. Downloads can use about 2.4 GB of data. Loading and inference depend on GPU memory and browser support.</p></details>
-      <details><summary>How to read Silex</summary><p>Each glyph contains six binary sites, with weights 32, 16 / 8, 4 / 2, 1. Fixed head arities determine how pieces combine. Bound-variable distances make scope explicit. New concepts carry their sense definitions and argument roles inside a counted PAIR text-and-content package. The core codec decodes that package; this converter’s documented model supplies its lexical interpretation.</p><p>Automatic interpretation is experimental. Check the literal reading, especially pronouns, quantifiers, and tense. Exact text mode preserves wording without claiming to formalize its meaning. Decoding recovers the encoded meaning, not the source sentence’s original phrasing.</p><p>Upload a complete raster panel with its white margin. Integer-scaled and rotated panels are supported. Cropped panels, camera photos, captions, and blurred resizing may fail safely.</p><a href="reference/Silex-Research-Report.pdf">Research report</a> · <a href="reference/Grammar-and-Semantics.md">Full grammar</a> · <a href="reference/silex_codec.py">Reference codec</a></details>
+      <details><summary>Privacy</summary><p>Image files are read with the browser’s local file APIs. There is no upload endpoint, server inference, account, or image storage. The page has no analytics. The English meaning model runs on your CPU after a first-use download of about 270 MB from this site. The optional language model runs on your GPU after downloading about 2.4 GB from Hugging Face and GitHub; those hosts receive ordinary download requests, not your sentences or images. Browser caching uses storage on your device. Model files are cached on your device. Translation speed and availability depend on browser support and device memory.</p></details>
+      <details><summary>How to read Silex</summary><p>Each glyph contains six binary sites, with weights 32, 16 / 8, 4 / 2, 1. Fixed head arities determine how pieces combine. Bound-variable distances make scope explicit. New concepts carry their sense definitions and argument roles inside a counted PAIR text-and-content package. The core codec decodes that package; this converter’s documented model supplies its lexical interpretation.</p><p>Text translation uses a trained AMR meaning parser with open concepts and relations. Each statement has its own graph; repeated statements remain separate. AMR does not fully formalize tense, definiteness, or quantifier scope. Review the graph and the source words retained in the image. Exact text mode preserves wording without claiming to formalize its meaning. Meaning-graph images recover both the model’s graph and the original source words. Older formal-expression images recover their encoded expression.</p><p>Upload a complete raster panel with its white margin. Integer-scaled and rotated panels are supported. Cropped panels, camera photos, captions, and blurred resizing may fail safely.</p><a href="reference/Silex-Research-Report.pdf">Research report</a> · <a href="reference/Grammar-and-Semantics.md">Full grammar</a> · <a href="reference/silex_codec.py">Reference codec</a></details>
       <span><a href="https://github.com/ctadros1/Silex">Language &amp; source code</a> · Silex v1</span>
     </footer>
     <noscript><p>This converter needs JavaScript to encode and decode images locally.</p></noscript>

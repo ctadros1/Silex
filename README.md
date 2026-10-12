@@ -1,76 +1,52 @@
 # Silex
 
-An experimental visual language for compact, compositional meaning, with a browser-local converter.
+An experimental visual language for compositional meaning, with a browser-local converter.
 
-**[Open the converter](https://project.christiantadros.com/silex-converter)** · **[Read the complete specification](docs/Silex-Specification.md)** · **[Research report](reference/Silex-Research-Report.pdf)** · **[64-glyph atlas](docs/glyph-atlas.png)**
+**[Open the converter](https://project.christiantadros.com/silex-converter)** · **[Language specification](docs/Silex-Specification.md)** · **[Meaning-graph format](docs/Meaning-Graphs.md)** · **[Research report](reference/Silex-Research-Report.pdf)**
 
-![Complete written Silex specimens](docs/written-specimens.png)
+![Written Silex specimens](docs/written-specimens.png)
 
-Silex separates a scoped semantic expression from its physical carrier. Its 64 glyphs each contain six binary sites in two columns and three rows. Their weights are:
+Silex separates meaning from its visual carrier. Its 64 glyphs each contain six binary sites in two columns and three rows, weighted `32,16 / 8,4 / 2,1`. Fixed-arity heads, counted calls, explicit variable scope, exact numbers, UTF-8 literals, functions, and declared concepts support arbitrary finite descriptions. The complete image also pays for its border, length, checksum, and padding.
 
-```text
-32 16
- 8  4
- 2  1
-```
-
-A head determines its argument count. Quantifiers introduce explicitly referenced variables. The resulting prefix expression needs no transmitted parentheses or spaces. Numbers, exact UTF-8 text, local definitions, functions, quotation, and declared primitives support arbitrary finite descriptions. A framed binary lattice carries length, checksum, and padding as well as the expression.
+For example, the original formal grammar distinguishes:
 
 ```text
-I see you.
-(SEE ME YOU)
-
-I see the red bird.
-(SEE ME (THE (AND (BIRD V0) (RED V0))))
-
 Every child sees a bird.
 (ALL (CHILD V0) (SOME (BIRD V0) (SEE V1 V0)))
 
-There is a bird every child sees.
+There is one bird that every child sees.
 (SOME (BIRD V0) (ALL (CHILD V0) (SEE V0 V1)))
 ```
 
-The last two expressions have different meanings. Scope is encoded explicitly; a reader never guesses pronoun binding from proximity.
+## Translate and inspect
 
-## Use the converter
+1. Enter text, choose its language, and press **Translate**.
+2. Review the model’s literal meaning graph and the source words retained in the image.
+3. Select a concept, relation, source word, or glyph to highlight the fields and dictionary entry that encode it.
+4. Download PNG/SVG or copy the image.
+5. Choose **Silex image** to decode a complete raster panel locally.
 
-1. Select an input language and enter a sentence, or try an example.
-2. Translate, review the literal reading, and inspect the semantic tree.
-3. Select a glyph or tree node to highlight its exact location and subtree in the final frame.
-4. Download a clean PNG/SVG or copy the PNG to the clipboard.
-5. Swap direction or select **Silex image**, choose a raster image, and select an output language.
+English translation uses **a trained AMR meaning parser**, amrlib’s BART-base model, converted to quantized ONNX. It does not match a list of sentences or use the hand-written English grammar. A trained UDPipe tokenizer splits documents into statements; the model processes each statement and a deterministic compiler writes the resulting graphs into Silex. Repeated statements remain separate, with references local to each graph. Concepts and relation labels are open strings.
 
-English, Spanish, French, German, Italian, Portuguese, Mandarin, Japanese, Korean, Arabic, Hindi, and Russian are available. Five shared constructions in all twelve languages and a broader compositional English grammar work immediately, including observed events, movement paths, possession, proper names, contextual pronouns, adjectives, spatial relations, cardinality, relative clauses, passive voice, infinitive control, concession, transfers, questions, ability, negation, and tense. Unseen multilingual and more complex sentences use an optional **Qwen3.5 4B** model through **WebLLM**, running on the browser's GPU. Its weights download about 2.37 GB plus tokenizer/runtime files; roughly 4 GB of GPU memory is needed. WebGPU and shader-f16 support are required for AI; grammar examples, image decoding, and exports do not require AI. Browser/device memory and download access can limit model loading.
+The first English translation downloads about **270 MB** of model/runtime assets. Subsequent attempts reuse the browser cache. Inference runs on the CPU in a background worker; English does not require WebGPU. The page shows checked download bytes, the current statement, generated-output activity, elapsed time, and an animated indicator. **Stop** terminates the worker immediately. Editing the input cancels the previous attempt; exports remain disabled until a new result is ready.
 
-For ordinary structures with unfamiliar words the local model supplies contextual word senses and the grammar compiler handles scope. More complex structures use a nested meaning tree with explicit clause relationships. The compiler constructs lexical calls and converts named semantic variables to scope distances. The converter validates syntax, binding, role counts, and conservative proposition typing, then derives the glyph explanations from the actual encoded tree. Validation is not proof that the interpretation matches the source. Review pronouns, quantifiers, tense, and lexical senses. The automatic translator is experimental.
+Spanish, French, German, Italian, Portuguese, Mandarin, Japanese, Korean, Arabic, Hindi, and Russian use an optional **Qwen3.5 4B** language model through WebLLM. It translates ordinary text into English before meaning parsing. It requires WebGPU, shader-f16, approximately 2.4 GB of downloaded files and sufficient GPU memory. Both the original words and the English intermediate are retained in these images. To read an image in its original language, no AI is needed. Translation into another language uses the optional local language model.
 
-The converter never silently substitutes quoted text for semantic translation. If analysis cannot be completed, the user can separately choose **Preserve exact wording**, which explicitly encodes a TEXT literal. The interface identifies that mode; it does not claim that preserving a quotation is semantic translation. Reverse conversion recovers the encoded content, not original wording that was never stored.
+The original scoped grammar remains available through **Silex expression**, including precise quantifier scope and arbitrary declared predicates. Older images remain decodable. The legacy example grammar is retained for compatibility tests; it is not the text translator’s runtime path.
 
-## New concepts and counted grounding
+## What the image contains
 
-The converter can declare new predicate senses with explicit role signatures and English definitions. These travel in the same image using the original v1 grammar, not an external per-image database:
+The [meaning-graph convention](docs/Meaning-Graphs.md) uses the existing `PAIR`, `TEXT`, `CALL`, `SYMBOL`, and `NAT` heads. A counted UTF-8 dictionary contains concepts, roles, values, source words, and whitespace. Each statement contains a root, concept nodes, directed relations, typed values, and its source atoms. Shared dictionary entries save repetition; they do not merge statements or node identities.
 
-```text
-PAIR
-  TEXT {"schema":"silex-lexicon/1","entries":[
-    {"id":"urn:silex:lex:happy","roles":["entity"],
-     "definition":"Experiencing pleasure or contentment."}
-  ]}
-  CALL SYMBOL "urn:silex:lex:happy" ME
-```
+Every declaration, reference, separator, and source witness costs real image area. There is no external per-image vocabulary database or hidden attachment. The original Python codec can decode the enclosing expression; interpreting its graph convention requires the published graph specification and shared AMR/English grounding knowledge. The encoder’s neural weights are not needed to recover the graph or source words.
 
-The actual TEXT is length-delimited UTF-8 JSON and the CALL has a counted argument list. All declaration bytes and repeated identifiers are paid for. The original codec recovers a PAIR value containing declarations and content. Interpreting that value as a lexical package requires the converter's explicitly declared model convention, documented in [the lexical package specification](docs/Converter-Lexical-Packages.md). English sense definitions remain a shared grounding prior, not a mathematical reduction of every human concept.
+The converter never treats a whole-sentence quotation as a successful meaning analysis. **Preserve exact wording** remains a separate, explicitly identified text-literal mode. Normal translation requires a real meaning graph.
 
-## Privacy and hosting
+## Privacy
 
-- Images are read using local browser file APIs and decoded from pixels.
-- Sentence interpretation and translation run on the device; there is no remote inference.
-- No upload endpoint, user account, analytics, R2 bucket, D1 database, or server image storage is used.
-- Model downloads contact Hugging Face and GitHub. These hosts see ordinary model-file download requests; sentence text and images are not sent to them by this app.
-- Model caching consumes storage on the visitor's device. Turning off AI releases its runtime but keeps those cached files.
-- The app is hosted as static files. The server does not process translations or store uploaded images.
+Sentences, images, and model inference stay in the browser. Images are decoded from pixels using local file APIs. There is no upload endpoint, remote inference, account, analytics, or server storage for visitor images. Model downloads are ordinary static-file requests; optional language-model downloads contact Hugging Face and GitHub. Model caches occupy the visitor’s device storage.
 
-Upload an intact PNG, lossless WebP, or sufficiently crisp JPEG panel, including its white margin. Integer scales and rotations are supported. Photos, cropped panels, captions, blur, and noninteger resampling may fail safely. Clipboard image support depends on browser permissions; PNG download is the fallback. Exported SVGs can be rasterized, but uploaded SVG is intentionally not accepted because raster files cannot contain linked remote assets.
+Use an intact PNG or crisp lossless raster panel with its white margin. Integer scaling and rotations are supported. Photos, blur, captions, cropping, and noninteger resizing may fail safely. Clipboard support depends on the browser; downloading a PNG is the fallback.
 
 ## Run locally
 
@@ -78,20 +54,16 @@ Use Node.js 22.12 or newer:
 
 ```sh
 npm ci
+npm run prepare-model
 npm test
-npm run build
 npm run dev
 ```
 
-Open `http://localhost:8792/silex-converter/`. To deploy into the configured account and route, an authorized Cloudflare login is required:
+Open `http://localhost:8792/silex-converter/`. Model assets are downloaded from this repository’s versioned public release and verified against [SHA-256 checksums](models/manifest.json). They are separate from Git source history. See [model preparation](docs/Model-Preparation.md) to reproduce the conversion or run the actual-model regression check.
 
-```sh
-npm run deploy
-```
+`npm run deploy` builds and publishes the static converter to the account/route in `wrangler.jsonc`. A Cloudflare login is required. For another deployment, change that configuration. No inference API keys or image-storage credentials are needed. GitHub Actions checks source and builds; it does not deploy.
 
-No inference API keys or storage credentials are required. Deploying to a different account requires updating `wrangler.jsonc`; do not assume access to the original hostname.
-
-The Python language reference can independently encode and decode images:
+The independent Python reference can encode/decode the original wire format:
 
 ```sh
 python3 -m pip install Pillow
@@ -99,31 +71,24 @@ python3 reference/silex_codec.py '(SEE ME YOU)' --png message.png
 python3 reference/silex_codec.py --decode-png message.png
 ```
 
-## Evidence and limits
+## Evidence and limitations
 
-The browser codec is checked against all thirteen original Python specimens, including exact words, packets, and frame geometry. Tests cover all 64 glyph patterns, large integers, exact Unicode, binding and type rejection, 60 authored multilingual constructions, 35 everyday English semantic translations, independent observed-event countermodels, omission rejection, named-variable scopes, 1,000 random syntax trees, all single-bit corruptions in the specimen packets, compressed frames, an independent quantifier-scope countermodel, and paid lexical declarations.
+The new trained pipeline completed **243 inputs containing 252 statements**, including 67 externally sourced English texts, without graph-compilation or codec-round-trip failures. Every original character was recovered from the encoded source atoms. Three model outputs needed completed closing brackets, which are reported as interpretation notes. This checks operational reliability, not universal semantic accuracy. Browser checks and the distinction between unit tests, model tests, and live deployment evidence are recorded in [Verification](docs/Verification.md).
 
-In the original 13-example experiment, equal nominal 32-pixel character height gave Silex 8.6% less area than English and 16.3% more than Mandarin. Comparing tiny binary cells against conventional 32-pixel typography did not match recognition error. The demonstration corpus and dictionary were designed together; Mandarin glosses were not independently reviewed. No global optimality or measured semantic entropy is claimed. See the [research records](research) and complete specification for definitions, decoder cost, and limitations.
+AMR is an interpretation representation, not complete first-order semantics. It does not fully specify tense, articles, exact quantifier scope, or cross-sentence coreference. A model can choose the wrong concept, identity, attachment, or role. For example, the tested biological sentence classified a mitochondrion as an enzyme. Source words preserve information the graph omitted or misinterpreted, but they do not make the graph correct. Review both. The formal language’s expressiveness and the automatic translator’s accuracy are different claims.
 
-The converter uses direct profile 1 for inspectable output and accepts profiles 1 and 2 on input. Its pixel decoder is an intact-panel decoder, not camera OCR. Its English literal realizer explains structure; its semantic specification is broader than the implemented finite-model evaluator. Syntax tests do not establish complete model semantics or human readability.
-
-## Repository map
+The original 13-example area experiment found Silex 8.6% smaller than English and 16.3% larger than Mandarin at equal nominal 32-pixel character height. It did not control recognition error or measure semantic entropy. Those results apply to the original scoped specimens, **not** these larger graph-and-source packages. No universal density optimum or universal translation accuracy is claimed. See the specification and [research records](research) for measurement definitions and decoder costs.
 
 | Path | Contents |
 |---|---|
-| `src/codec.js` | Browser Silex syntax, framing, rendering, and pixel decoding |
-| `src/language.js`, `src/english.js` | English grammar, twelve-language examples, literal meanings, explanations |
-| `src/semantic-plan.js`, `src/coverage.js` | Named-scope compilation and guards against dropped details |
-| `src/lexicon.js` | Counted lexical packages and signature validation |
-| `src/ai.js`, `src/ai-worker.js` | On-device model loading, analysis, and translation |
+| `src/codec.js` | Original syntax, framing, rendering, and pixel decoding |
+| `src/meaning-worker.js`, `src/meaning.js` | Trained local interpretation and cancellation |
+| `src/meaning-graph.js` | Open graph compilation, decoding, and visual field maps |
+| `src/document-segments.js`, `src/model-assets.js` | Learned boundary adapter and verified asset caching |
+| `src/ai.js`, `src/ai-worker.js` | Optional local language translation |
 | `src/app.js`, `src/index.html`, `src/style.css` | Converter interface |
-| `reference/` | Normative original grammar, Python codec, printable report |
-| `docs/` | Complete language specification, visual atlas, laboratory, converter conventions |
-| `research/` | Measurements, provenance, and original reproduction package |
-| `tests/` | Original Python golden fixtures and executable browser-code unit tests |
+| `scripts/`, `models/manifest.json` | Model reproduction, downloads, and integrity records |
+| `reference/`, `docs/`, `research/` | Language specification, visual atlas, reports, and provenance |
+| `tests/` | Codec, graph, legacy compiler, and streaming checks |
 
-Dependencies are pinned in `package-lock.json`. WebLLM and model attribution is listed in [third-party notices](THIRD-PARTY-NOTICES.md).
-
-## Translation completeness
-
-Silex has an open vocabulary; an unfamiliar word is not a missing character in a finite alphabet. New senses carry explicit definitions and ordered roles. The browser translator is an experimental implementation, not a guarantee that every possible natural-language sentence is interpreted correctly. Valid words can form ambiguous, figurative, context-dependent, or self-contradictory sentences. Check the chosen formal reading. The language's expressive mechanisms and the translator's measured coverage are different claims; [converter conventions](docs/Converter-Lexical-Packages.md) and [verification evidence](docs/Verification.md) make those limits explicit.
+Dependencies are pinned. Attribution and component licenses are in [third-party notices](THIRD-PARTY-NOTICES.md).

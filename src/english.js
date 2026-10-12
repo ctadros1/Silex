@@ -3,6 +3,7 @@ import {packageMeaning} from './lexicon.js';
 
 // An ordinary-word sense inventory, not the language's vocabulary. A missing
 // sense goes to the local model, which can supply another paid declaration.
+const coreTreeHeads={see:'SEE',love:'LOVE',read:'READ',build:'BUILD',help:'HELP',remember:'REMEMBER',solve:'SOLVE',prove:'PROVE',drink:'DRINK',give:'GIVE',inhabit:'LIVE',live:'LIVE',child:'CHILD',bird:'BIRD',red:'RED',person:'PERSON',book:'BOOK',scientist:'SCIENTIST',city:'CITY',machine:'MACHINE',problem:'PROBLEM',run:'RUN',die:'DIE',fail:'FAIL',know:'KNOW',believe:'BELIEVE',want:'WANT',say:'SAY',equals:'EQ',before:'BEFORE',cause:'CAUSE'};
 const baseNouns={
   child:['CHILD','children'],bird:['BIRD','birds'],person:['PERSON','people persons'],book:['BOOK','books'],scientist:['SCIENTIST','scientists'],city:['CITY','cities'],machine:['MACHINE','machines'],problem:['PROBLEM','problems'],
   street:['A public road in a town or city.','streets'],dog:['A domesticated canine animal.','dogs'],cat:['A domesticated feline animal.','cats'],mat:['A piece of material laid on a floor or other surface.','mats'],house:['A building used as a home.','houses'],home:['The place where an entity normally resides.','homes'],car:['A road vehicle with wheels for carrying people.','cars'],tree:['A perennial woody plant with a trunk.','trees'],friend:['A person with whom someone has a relationship of mutual affection.','friends'],student:['A person engaged in studying or attending an educational institution.','students'],teacher:['A person who teaches.','teachers'],woman:['An adult female human.','women'],man:['An adult male human.','men'],girl:['A female child or young person.','girls'],boy:['A male child or young person.','boys'],baby:['A very young child.','babies'],
@@ -241,9 +242,7 @@ export function englishAnalysis(source,additionalSenses=[],semanticTree=null,sem
       return bind(op==='lambda'?'LAM':op.toUpperCase(),args[0],...args.slice(1).map(a=>treeMeaning(a,depth+1)));
     }
     if(op==='true'||op==='false'){if(args.length)throw new Error('Truth constants have no arguments.');return p(op.toUpperCase());}
-    const core={see:'SEE',love:'LOVE',read:'READ',build:'BUILD',help:'HELP',remember:'REMEMBER',solve:'SOLVE',prove:'PROVE',drink:'DRINK',give:'GIVE',inhabit:'LIVE',live:'LIVE',child:'CHILD',bird:'BIRD',red:'RED',person:'PERSON',book:'BOOK',scientist:'SCIENTIST',city:'CITY',machine:'MACHINE',problem:'PROBLEM',run:'RUN',die:'DIE',fail:'FAIL',know:'KNOW',believe:'BELIEVE',want:'WANT',say:'SAY',equals:'EQ',before:'BEFORE',cause:'CAUSE'};
-    const definition=semanticDefinitions.find(d=>d.name===op);
-    const head=definition?null:core[op];
+    const head=coreTreeHeads[op],definition=head?null:semanticDefinitions.find(d=>d.name===op);
     if(!head&&!definition)throw new Error(`Supply a specific definition and roles for the predicate ${op}.`);
     const roles=definition?.roles||args.map((_,i)=>['know','believe','want','say','prove'].includes(op)&&i===1?'content':'entity');
     if(roles.length!==args.length)throw new Error(`The predicate ${op} has ${args.length} arguments but ${roles.length} declared roles.`);
@@ -281,7 +280,7 @@ export function meaningTreeAnalysis(source,tree,definitions){
     names.add(d.name);
   }
   definitions=definitions.map(d=>d.kind==='noun'||d.kind==='adjective'?{...d,roles:['entity']}:d);
-  const senses=definitions.filter(d=>d.kind==='noun'||d.kind==='adjective').map(d=>({stem:d.name,kind:d.kind,definition:d.definition,forms:d.kind==='noun'?[d.name+'s',d.name.endsWith('y')?d.name.slice(0,-1)+'ies':d.name+'es']:[]}));
+  const senses=definitions.filter(d=>!coreTreeHeads[d.name]&&(d.kind==='noun'||d.kind==='adjective')).map(d=>({stem:d.name,kind:d.kind,definition:d.definition,forms:d.kind==='noun'?[d.name+'s',d.name.endsWith('y')?d.name.slice(0,-1)+'ies':d.name+'es']:[]}));
   return englishAnalysis(source,senses,tree,definitions);
 }
 

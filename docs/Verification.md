@@ -1,56 +1,25 @@
 # Converter verification
 
-Evidence recorded on 2026-10-12. Unit tests, provider deployment, and rendered browser behavior are separate checks. This document does not claim universal automatic interpretation accuracy.
+Evidence recorded on 2026-10-12. Source tests, native model execution, browser WASM behavior, and deployed files are separate checks. None establishes universal semantic interpretation accuracy.
 
-## Executed local checks
+## Unit and compatibility checks
 
-`npm test` passes 21 tests, including:
+`npm test` passes 41 tests. The new graph checks cover repeated statements with local references, open concepts/roles, reentrancy, separate literal tags, exact large numbers, original non-English atoms, Unicode/escaped-string dictionary highlight positions, malformed references, learned Unicode sentence ranges, and SHA-256 asset integrity.
 
-- Exact wire words, packets, frame geometry and decoding for all 13 original Python specimens.
-- All 64 glyph patterns, large integers, Unicode, scope/arity/type rejection, and compressed frames.
-- All single-bit corruptions of the original specimen packets and 1,000 deterministic random syntax trees.
-- 60 authored examples across 12 languages and 35 everyday English semantic translations.
-- An independent finite-model test that distinguishes quantifier scope.
-- Independent perception countermodels: changing the walker, observer, street/path, ongoing aspect, or observation of the event makes the reported sentence false.
-- Rejection of dropped walking/path words even when unused declarations contain those words.
-- Open vocabulary beyond 12 declarations, named scope beyond V2, contextual vocabulary extensions, relative clauses, belief, and modality.
-- Cardinality, modal negation, meaning-tree compilation, passive voice, concession, and infinitive control.
+Compatibility checks retain all 13 original Python specimens with identical words, packets, and geometry; all 64 glyphs; exact Unicode and large integers; scope/type/arity rejection; compressed frames; single-bit corruption; and 1,000 deterministic random syntax trees. The legacy English/example compiler and its countermodels still pass, but it is no longer the forward text translator. Its authored sentence fixtures are not evidence for the trained parser’s accuracy.
 
-`npm run build` produces a static page, browser scripts and a worker for on-device inference. `wrangler deploy --dry-run` reports no runtime bindings.
+## Actual frozen-model regression
 
-## Browser evidence
+`node scripts/check-meaning-model.mjs` executed the quantized BART-base meaning parser and learned UDPipe sentence tokenizer on the native CPU. It processed 243 inputs and 252 statements in 24.1 seconds on the development machine, with zero graph-compilation or codec-round-trip failures. This timing excludes model loading and is not a browser performance claim.
 
-The interface was tested in Chrome. Model files were fetched from their pinned upstream revisions.
+Inputs consisted of 16 additional document/technical examples, 160 varied existing sentence fixtures, and 67 texts selected by a fixed sampling rule from the externally sourced UD English EWT test partition. Categories include repeated statements, punctuation/abbreviations, technical vocabulary, names, observed events, paths, questions, negation, quantification, transfers, relative clauses, nested beliefs, modality, passive voice, concession, and quoted speech. Overlap with upstream model training sources was not audited.
 
-| Input or action | Observed result |
-|---|---|
-| “I see you walking down the street.” | Compiles without AI. The encoded event is ongoing walking by YOU, along the unique street; ME sees YOU and that event. |
-| “The engineer repairs the telescope.” | On-device vocabulary definitions plus deterministic scope compilation. Engineer is actor, telescope is object. |
-| “Every engineer who owns a telescope believes that a distant planet may support life.” | Nested relative restriction, existential telescope, engineer-bound belief, and possibility are preserved. Word-sense selection still needs review; a structurally valid translation can use an overly broad definition. |
-| “Although the engine was repaired, the pilot refused to fly.” | Compiles after correcting the fly signature: an unnamed repair actor, both past clauses, concession, refusal, and unasserted flight content are preserved. |
-| Copy PNG, select Silex image, paste with Cmd+V | The actual clipboard PNG is decoded from pixels in the browser and recovers “I see the red bird.” |
-| “I am happy.” → image → English | Recovers “I am happy.” through local decoding and on-device realization. |
-| Same happy image → Spanish | Produces “Estoy experimentando placer o satisfacción.” The output preserves the supplied sense, though another phrasing could be more idiomatic. |
-| Download generated paid-lexicon PNG | The original Python reference decoder independently recovers its exact lexical package and content. |
+Every decoded source witness matched its input character for character. Three outputs omitted closing graph parentheses; completed-node repairs were recorded. Assertions check that the reported repeated sentence has two graphs, the bird is the flight’s actor, and “you” is the walking event’s actor. These are automatic interpretation tests, rather than hand-supplied graphs.
 
-Raster decoding was tested through actual clipboard PNG imports. The file-picker workflow was not automated in this run.
+A syntax-success count is not a semantic-accuracy estimate. Manual inspection found limitations: the biological sentence called a mitochondrion an enzyme, some frame roles differed from the author’s unquantized output, and an external name example reused a name node incorrectly. Source atoms retain the correct wording but do not correct the graph. No claim that all valid sentences have one correctly inferred formal meaning is made.
 
-The converter uses Qwen3.5 4B for word-sense assistance and meaning-tree interpretation. Grammar compilation and omission checks do not prove source/translation equivalence. Exact text is a separate mode.
+## Browser and deployment checks
 
-## Visual comparison
+The actual browser WASM parser, rather than the native ONNX runtime, is tested separately. The recorded browser cases include the repeated bird statements and the reported flight/walking inputs; their graphs preserved the intended count and actors. The interface exposes download bytes, statement stage, output activity, elapsed time, and cancellation without sending sentence text to an inference server.
 
-The initial [design concept](images/design-concept.png) is compared against the final rendered page at its 1435 × 1096 reference viewport. Five comparison points:
-
-1. White page, dark heading, muted introductory sentence, restrained blue action color.
-2. Two language selectors, centered direction control, and a bordered two-panel translator.
-3. Left sentence editor with example, character count, privacy hint, and translation action; right image with export controls.
-4. Below-panel literal reading, inspectable glyphs, semantic tree, highlighted assembly, and exact expression.
-5. Typography, spacing, border treatment, and a single-column mobile layout.
-
-The actual message is an intact two-dimensional Silex frame rather than the concept's decorative glyph strip. It includes required borders, margin, length and checksum. Paid lexical definitions make unfamiliar concepts substantially larger. Blue highlights are explanatory overlays and are excluded from PNG/SVG exports.
-
-A 375 × 812 mobile viewport is checked for horizontal overflow and legible stacked controls. Temporary viewport overrides are reset after testing. Screenshots are captured using the browser's screenshot API, not an image generator.
-
-## Release evidence
-
-The live converter serves the expected HTML, application assets and security headers. Its static server rejects an empty POST with HTTP 405. The browser performs image decoding and inference locally. The public repository contains the language specification, research report and records, reference codec, converter code, tests, and a build/test workflow. It does not contain model weights, private keys, or visitor data.
+Additional final browser/export/deployment evidence is recorded after the final build is published. The original area comparisons remain limited to the original formal specimens; the graph-and-source packages have not been compared at matched recognition error against English or Mandarin.

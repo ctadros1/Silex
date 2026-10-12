@@ -1,6 +1,7 @@
 import {literal, notation, parse, roles} from './codec.js';
 import {unpackMeaning,validateLexicon} from './lexicon.js';
 import {englishAnalysis} from './english.js';
+import {resolveLexical,lexicalTypes} from './logic-vocabulary.js';
 export const LANGUAGES = [
   ['en','English'],['es','Español'],['fr','Français'],['de','Deutsch'],['it','Italiano'],['pt','Português'],
   ['zh','中文'],['ja','日本語'],['ko','한국어'],['ar','العربية'],['hi','हिन्दी'],['ru','Русский']
@@ -57,6 +58,19 @@ export function literalEnglish(n,env=[],lexicon=new Map()) {
   const packaged=unpackMeaning(n);
   if(packaged.lexicon.length){const m=new Map(packaged.lexicon.map(e=>[e.id,e]));return `${literalEnglish(packaged.content,env,m)}. Definitions included in this image: ${packaged.lexicon.map(e=>`${e.id.split(':').at(-1)} = ${e.definition} (roles: ${e.roles.join(', ')||'none'})`).join('; ')}`;}
   const a=i=>literalEnglish(n.args[i],env,lexicon),op=n.op;
+  if(op==='LEX'){
+    const e=resolveLexical(n),label=e.key.split('.')[0].replaceAll('_',' '),args=n.args.map((_,i)=>a(i));
+    const constants={WE:'we',HE:'he',SHE:'she',IT:'it',THEY:'they'};if(constants[e.key])return constants[e.key];
+    const relations={ACROSS:'moves across',THROUGH:'moves through',DOWN:'moves along',TOWARD:'moves toward',IN:'is inside',ON:'is on',UNDER:'is under',OVER:'is over',BESIDE:'is beside',AT_PLACE:'is at',FROM:'originates from',TO:'has destination',WITH:'is with',USING:'uses',HAS:'possesses',NAMED:'has exact name',COUNT:'has member count'};
+    if(relations[e.key])return `${args[0]} ${relations[e.key]} ${args[1]}`;
+    if(['ONGOING','PERFECT','CONDITIONAL'].includes(e.key))return `${e.key==='ONGOING'?'In progress':e.key==='PERFECT'?'Previously completed with current relevance':'Hypothetically'}: [${args[0]}]`;
+    if(e.key==='BECAUSE')return `[${args[0]}] because [${args[1]}]`;if(e.key==='EVENT')return `the event described by [${args[0]}]`;
+    if(e.key==='AWAY')return `${args[0]} moves away`;if(e.key==='PLURAL')return `${args[0]} is a plural group`;
+    if(e.part==='p')return `${e.key.startsWith('pb:')?e.key.slice(3):e.key.slice(6)}(${args.map((x,i)=>`ARG${n.slots[i]} (${e.roles[n.slots[i]]||'unspecified semantic role'}): ${x}`).join('; ')}) [sense: ${e.definition}]`;
+    if(e.part==='n'||e.part==='a')return `${args[0]} has property ${label} (${e.definition})`;
+    if(e.part==='r')return `With modifier ${label} (${e.definition}): [${args[0]}]`;
+    return `${label}(${args.map((x,i)=>`${e.part==='v'?['subject','object/content','recipient/complement'][i]:lexicalTypes(e,args.length)[i]}: ${x}`).join('; ')}) [sense: ${e.definition}]`;
+  }
   if(op==='ME')return 'I';if(op==='YOU')return 'you';if(op==='NOW')return 'the utterance context';
   if(/^V[012]$/.test(op))return env[Number(op[1])]||`unbound ${op}`;
   if(op==='REF')return env[Number(n.value)]||'unbound reference';
@@ -88,12 +102,14 @@ export function literalEnglish(n,env=[],lexicon=new Map()) {
 export function validateSemantic(n,env=[],lexicalPredicates=false){
   const op=n.op,types=n.args.map((a,i)=>validateSemantic(a,op==='QUOTE'?[]:['ALL','SOME','THE'].includes(op)?['entity',...env]:op==='LAM'?['any',...env]:op==='LET'&&i===1?[validateSemantic(n.args[0],env,lexicalPredicates),...env]:env,lexicalPredicates));
   const expect=(i,t)=>{if(types[i]!==t&&types[i]!=='any')throw new Error(`${op} needs ${t} in argument ${i+1}.`);};
+  if(op==='LEX'){const entry=resolveLexical(n);lexicalTypes(entry,n.args.length).forEach((t,i)=>{if(t!=='any')expect(i,t);});return entry.result;}
   if(['NOT','PAST','FUTURE','POSSIBLE','NECESSARY','OUGHT'].includes(op)){expect(0,'prop');return 'prop';}
   if(['AND','OR','IF','ALL','SOME'].includes(op)){expect(0,'prop');expect(1,'prop');return 'prop';}
   if(op==='THE'){expect(0,'prop');return 'entity';}
   if(['KNOW','BELIEVE','WANT'].includes(op)){expect(0,'entity');expect(1,'prop');return 'prop';}
   if(['CHILD','BIRD','RED','PERSON','BOOK','SCIENTIST','CITY','MACHINE','PROBLEM','RUN','DIE','FAIL'].includes(op)){expect(0,'entity');return 'prop';}
   if(['SEE','LOVE','READ','BUILD','LIVE','HELP','DRINK','GIVE'].includes(op)){types.forEach((_,i)=>expect(i,'entity'));return 'prop';}
+  if(['CAUSE','BEFORE'].includes(op)){expect(0,'entity');expect(1,'entity');return 'prop';}
   if(op==='PROVE'){expect(0,'entity');expect(1,'prop');return 'prop';}
   if(['KNOW','BELIEVE','WANT','SAY','REMEMBER'].includes(op)){expect(0,'entity');return 'prop';}
   if(op==='AT'){expect(0,'context');expect(1,'prop');return 'prop';}

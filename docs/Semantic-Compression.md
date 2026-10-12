@@ -1,5 +1,7 @@
 # Semantic compression in the converter
 
+This document describes an older image format, retained for decoding compatibility. Current normal translations use [scoped compilation and lexical profile 3](Scoped-Compilation.md). Measurements below apply to the older pipeline.
+
 Normal translation writes meaning using Silex’s original 64 heads. It does not copy the source’s words, whitespace, punctuation, language name, or JSON into the image. Exact-text mode is deliberately separate. The six-site binary appearance is the physical glyph alphabet, not a character-by-character encoding of English.
 
 ## Native compilation

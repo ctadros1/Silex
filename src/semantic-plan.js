@@ -15,7 +15,7 @@ export function compilePlan(plan,environment=[],depth=0){
     return index<3?node(`V${index}`):{op:'REF',args:[],value:String(index)};
   }
   const args=plan.args.map((a,i)=>compilePlan(a,plan.op==='QUOTE'?[]:plan.bind&&(['ALL','SOME','THE','LAM'].includes(plan.op)||(plan.op==='LET'&&i===1))?[plan.bind,...environment]:environment,depth+1));
-  const result=plan.op==='TEXT'?literal(plan.value):['SYMBOL','NAT','REF'].includes(plan.op)?{op:plan.op,args:[],value:plan.value}:node(plan.op,...args);
+  const result=plan.op==='LEX'?{op:'LEX',key:plan.key,args,...(plan.slots?{slots:plan.slots}:{}),...(plan.lexical?{lexical:plan.lexical}:{})}:plan.op==='TEXT'?literal(plan.value):['SYMBOL','NAT','REF'].includes(plan.op)?{op:plan.op,args:[],value:plan.value}:node(plan.op,...args);
   return depth===0?validate(result):result;
 }
 /** Model intermediate: ALL $x CHILD $x ...; names have no wire cost. */

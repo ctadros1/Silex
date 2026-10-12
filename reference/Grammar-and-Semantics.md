@@ -1,3 +1,5 @@
+The current converter also uses the [lexical profile-3 extension](https://github.com/ctadros1/Silex/blob/main/docs/Scoped-Compilation.md), whose shared registry is [Logic-Vocabulary.json](Logic-Vocabulary.json). The original grammar below remains unchanged.
+
 # Silex v1: glyphs, grammar, semantics, and expressibility
 
 ## 4. Foundational glyphs and physical writing

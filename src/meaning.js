@@ -1,4 +1,7 @@
-import {compileMeaning} from './semantic-compiler.js';
+import {semanticFeatures} from './semantic-features.js';
+import {compileScopedMeaning,unresolvedConcepts,groundSourcePredicates} from './scoped-compiler.js';
+import {loadVocabulary} from './logic-vocabulary.js';
+import * as ai from './ai.js';
 let worker,active,sequence=0;
 export function cancel(){worker?.terminate();worker=null;active?.reject(new Error('Translation stopped.'));active=null;}
 export function analyze(text,language='en',onProgress=()=>{},original=null){
@@ -13,7 +16,7 @@ export function analyze(text,language='en',onProgress=()=>{},original=null){
       const data=event.data;if(data.type==='progress'){onProgress(data);return;}if(data.id!==active?.id)return;
       active=null;
       if(data.type==='error'){worker.terminate();worker=null;reject(new Error(data.message));return;}
-      try{resolve(compileMeaning(data.parts));}catch(e){reject(e);}
+      (async()=>{await loadVocabulary(stage=>onProgress({stage,detail:'Loading shared predicate definitions.'}));for(const part of data.parts)if(part.tokens)part.features=semanticFeatures(part.graph,part.tokens);groundSourcePredicates(data.parts);for(const part of data.parts)if(part.tokens)part.features=semanticFeatures(part.graph,part.tokens);const unknown=unresolvedConcepts(data.parts);const definitions=unknown.length?await ai.defineConcepts(unknown,text,onProgress):[];return compileScopedMeaning(data.parts,definitions);})().then(resolve,reject);
     };
     worker.postMessage({id,text});
   });

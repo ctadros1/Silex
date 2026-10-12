@@ -1,4 +1,6 @@
-/** Silex v1. Wire-compatible with the original Python research codec. */
+/** Core profiles 1/2 remain compatible with the original Python codec.
+ * Profile 3 adds shared, grounded lexical predicate heads, not graph records. */
+import {resolveLexical,lexicalAt,lexicalCount,lexicalTypes,loadVocabulary} from './logic-vocabulary.js';
 export const NAMES = `TRUE FALSE NOT AND OR IF ALL SOME LAM APP LET EQ AT SAY KNOW BELIEVE
 CAUSE BEFORE PAIR NIL NAT TEXT REF SYMBOL CALL THE QUOTE V0 V1 V2 ME YOU
 NOW PAST FUTURE POSSIBLE NECESSARY WANT OUGHT ASK CHILD BIRD RED SEE GIVE
@@ -27,9 +29,10 @@ function utf8(s) {
 }
 export function validate(n, depth=0, level=0) {
   if (level>LIMITS.depth) fail('This expression is nested too deeply for the converter.');
-  if (!n || typeof n!=='object' || !own(IDS,n.op)) fail('Unknown Silex head.');
+  if (!n || typeof n!=='object' || !own(IDS,n.op)&&n.op!=='LEX') fail('Unknown Silex head.');
   const {op,args}=n;
   if (!Array.isArray(args) || (ARITIES[IDS[op]]>=0 && args.length!==ARITIES[IDS[op]]) || (op==='CALL' && !args.length)) fail(`Incorrect number of arguments for ${op}.`);
+  if(op==='LEX'){const e=resolveLexical(n);lexicalTypes(e,args.length);if(e.part==='p'&&(!Array.isArray(n.slots)||n.slots.length!==args.length||n.slots.some((v,i)=>!Number.isInteger(v)||v<0||v>5||e.id===null&&!Object.hasOwn(e.roles,v)||i&&v<=n.slots[i-1])))fail('Invalid lexical role slots.');}
   if (op==='NAT' || op==='REF') {
     const v=integer(n.value);
     if (op==='REF' && v>=BigInt(depth)) fail('Unbound variable reference.');
@@ -74,34 +77,46 @@ export class Reader {
   }
 }
 export function encode(n) {
-  validate(n);const words=[],records=[];
+  validate(n);const words=[],records=[],definitions=[],localIndexes=new Map();
+  const containsLex=t=>t.op==='LEX'||t.args.some(containsLex);let profile=containsLex(n)?3:1;
   function go(t,path='Meaning',environment=[]) {
     const start=words.length,op=t.op;
-    words.push(IDS[op]);const record={index:start,op,value:IDS[op],kind:'head',path,node:t,start,end:0,environment:[...environment]};records.push(record);
-    if(op==='NAT'||op==='REF') {
+    words.push(op==='LEX'?IDS.SYMBOL:IDS[op]);const record={index:start,op:op==='LEX'?resolveLexical(t).label:op,value:words[start],kind:'head',path,node:t,start,end:0,environment:[...environment]};records.push(record);
+    if(op==='LEX'){
+      profile=3;const e=resolveLexical(t);let id=e.id;if(id===null&&localIndexes.has(e.key)){const prior=resolveLexical({key:e.key,lexical:definitions[localIndexes.get(e.key)]});if(prior.definition!==e.definition||prior.part!==e.part||(prior.result||'prop')!==e.result||JSON.stringify(prior.types)!==JSON.stringify(e.types)||JSON.stringify(prior.roles)!==JSON.stringify(e.roles))fail('Conflicting local lexical definitions.');}
+      if(id===null){if(!localIndexes.has(e.key)){localIndexes.set(e.key,definitions.length);definitions.push({key:e.key,part:e.part,definition:e.definition,...(e.part==='x'?{types:e.types,result:e.result}:e.part==='p'?{roles:e.roles}:{})});}id=lexicalCount()+localIndexes.get(e.key);}
+      append(uint(id+1),'lexical code',path,record);if(e.part==='v')append(uint(t.args.length),'lexical arity',path,record);if(e.part==='p')append([t.slots.reduce((a,i)=>a|(1<<i),0)],'semantic role slots',path,record);record.codeEnd=words.length;
+    }else if(op==='NAT'||op==='REF') {
       const v=integer(t.value);
       if(op==='REF' && v<=2n){words[start]=IDS[`V${v}`];record.op=`V${v}`;record.value=words[start];}
       else append(uint(v),'integer',path,record);
     } else if(op==='TEXT'||op==='SYMBOL') {
+      if(op==='SYMBOL'&&profile===3)append([0],'literal symbol escape',path,record);
       const bytes=utf8(t.value);append(uint(bytes.length),'byte count',path,record);append(byteWords(bytes),'literal bytes',path,record);
     } else if(op==='CALL')append(uint(t.args.length-1),'argument count',path,record);
     t.args.forEach((a,i)=>{
       const binds=['ALL','SOME','LAM','THE'].includes(op)||(op==='LET'&&i===1);
       const e=op==='QUOTE'?[]:binds?[`${op.toLowerCase()} variable at glyph ${start+1}`,...environment]:environment;
-      go(a,`${path} / ${roles(op)[i]||`argument ${i+1}`}`,e);
+      const signature=op==='LEX'?lexicalTypes(resolveLexical(t),t.args.length):roles(op);
+      go(a,`${path} / ${signature[i]||`argument ${i+1}`}`,e);
     });
     record.end=words.length;
   }
   function append(ws,kind,path,parent){for(const value of ws){records.push({index:words.length,value,kind,path,node:parent.node,op:parent.op,start:words.length,end:words.length+1,environment:parent.environment});words.push(value);}}
   go(n);if(words.length>LIMITS.words)fail('This expression exceeds the browser size limit.');
-  return {words,records};
+  return {words,records,profile,definitions};
 }
-export function decode(words) {
+export function decode(words,{profile=1,definitions=[]}={}) {
   const r=new Reader(words);
   function go(level=0){
     if(level>LIMITS.depth)fail('Expression depth limit exceeded.');
     const op=NAMES[r.word()];let n={op,args:[]};
-    if(op==='NAT'||op==='REF'){const v=r.uint();if(op==='REF'&&v<=2n)fail('Use the canonical variable glyph.');n.value=v.toString();}
+    if(profile===3&&op==='SYMBOL'){
+      const index=r.count(lexicalCount()+definitions.length)-1;if(index<0){n={op:'SYMBOL',args:[],value:readString(r)};return n;}
+      const e=index<lexicalCount()?lexicalAt(index):resolveLexical({key:definitions[index-lexicalCount()]?.key,lexical:definitions[index-lexicalCount()]});
+      if(!e)fail('Unresolved lexical head.');n={op:'LEX',key:e.key,args:[],...(index>=lexicalCount()?{lexical:definitions[index-lexicalCount()]}:{})};
+      if(e.part==='p'){const mask=r.word();n.slots=Array.from({length:6},(_,i)=>i).filter(i=>mask&(1<<i));}const count=e.part==='p'?n.slots.length:e.part==='v'?r.count(3):e.types.length;lexicalTypes(e,count);for(let i=0;i<count;i++)n.args.push(go(level+1));
+    }else if(op==='NAT'||op==='REF'){const v=r.uint();if(op==='REF'&&v<=2n)fail('Use the canonical variable glyph.');n.value=v.toString();}
     else if(op==='TEXT'||op==='SYMBOL'){try{n.value=new TextDecoder('utf-8',{fatal:true}).decode(r.bytes(r.count(LIMITS.literalBytes)));}catch(e){fail('Invalid literal encoding: '+e.message);}}
     else {const k=op==='CALL'?r.count()+1:ARITIES[IDS[op]];for(let i=0;i<k;i++)n.args.push(go(level+1));}
     return n;
@@ -116,7 +131,7 @@ export function parse(text) {
   function go(level=0){
     if(level>LIMITS.depth)fail('Expression depth limit exceeded.');
     const t=tokens[p++];if(t===undefined)fail('Incomplete expression.');
-    if(t==='('){const op=tokens[p++];if(!own(IDS,op))fail('Unknown expression head.');let n={op,args:[]};
+    if(t==='('){const op=tokens[p++];if(op?.startsWith('@')&&op.includes('/')&&(!/^@[^/]+\/(0|[1-9][0-9]?)$/.test(op)||Number(op.split('/')[1])>63))fail('Invalid lexical role mask.');if(!own(IDS,op)&&!op.startsWith('@'))fail('Unknown expression head.');let n=op.startsWith('@')?{op:'LEX',key:op.slice(1).split('/')[0],args:[],...(op.includes('/')?{slots:Array.from({length:6},(_,i)=>i).filter(i=>Number(op.split('/')[1])&(1<<i))}:{})}:{op,args:[]};
       if(['NAT','REF','TEXT','SYMBOL'].includes(op)){const raw=tokens[p++];try{n.value=['TEXT','SYMBOL'].includes(op)?JSON.parse(raw):integer(raw).toString();}catch{fail('Invalid literal value.');}}
       else {while(tokens[p]!==')' && p<tokens.length)n.args.push(go(level+1));}
       if(tokens[p++]!==')')fail('Missing closing parenthesis.');return n;
@@ -128,6 +143,7 @@ export function parse(text) {
   const n=go();if(p!==tokens.length)fail('Extra expression material.');return validate(n);
 }
 export function notation(n) {
+  if(n.op==='LEX')return n.args.length?`(@${n.key}${n.slots?'/'+n.slots.reduce((a,i)=>a|(1<<i),0):''} ${n.args.map(notation).join(' ')})`:`(@${n.key}${n.slots?'/'+n.slots.reduce((a,i)=>a|(1<<i),0):''})`;
   if(n.op==='TEXT')return JSON.stringify(n.value);
   if(n.op==='NAT')return String(n.value);
   if(n.op==='SYMBOL')return `(SYMBOL ${JSON.stringify(n.value)})`;
@@ -135,11 +151,21 @@ export function notation(n) {
   return n.args.length?`(${n.op} ${n.args.map(notation).join(' ')})`:n.op;
 }
 export function crc12(words){let crc=0xFFF;for(const w of words)for(let i=5;i>=0;i--){const fb=((crc>>11)&1)^((w>>i)&1);crc=(crc<<1)&4095;if(fb)crc^=0x80F;}return crc;}
-export function packet(body){const h=[1,...uint(body.length),...body],c=crc12(h);return [...h,c>>6,c&63];}
+const TYPES=['entity','prop','nat','text','context','function','any'];
+function stringWords(value){const bytes=utf8(value);return [...uint(bytes.length),...byteWords(bytes)];}
+function readString(r){return new TextDecoder('utf-8',{fatal:true}).decode(r.bytes(r.count(LIMITS.literalBytes)));}
+export function packet(body,encoding={profile:1,definitions:[]}){
+ let h;if(encoding.profile===3){h=[3,1,...uint(encoding.definitions.length)];for(const d of encoding.definitions){h.push(...stringWords(d.key),'nvarxp'.indexOf(d.part),...stringWords(d.definition));if(d.part==='p')h.push(Object.keys(d.roles).reduce((mask,id)=>mask|(1<<Number(id)),0));if(d.part==='x')h.push(TYPES.indexOf(d.result),...uint(d.types.length),...d.types.map(t=>TYPES.indexOf(t)));}h.push(...uint(body.length),...body);}else h=[1,...uint(body.length),...body];
+ if(h.length+2>LIMITS.words+100)fail('This complete message exceeds the browser size limit.');const c=crc12(h);return [...h,c>>6,c&63];
+}
+export function declarationSpans(encoding){
+ const spans=new Map();if(encoding.profile!==3)return spans;let start=2+uint(encoding.definitions.length).length;for(const d of encoding.definitions){const roleSize=d.part==='p'?1:0;const size=roleSize+stringWords(d.key).length+1+stringWords(d.definition).length+(d.part==='x'?1+uint(d.types.length).length+d.types.length:0);spans.set(d.key,{start,end:start+size});start+=size;}return spans;
+}
 export async function unpacket(words) {
-  const r=new Reader(words),profile=r.word();if(profile!==1&&profile!==2)fail('Unsupported Silex version or profile.');
-  let body,n,compressed,bodyStart;
-  if(profile===1){n=r.count();bodyStart=r.pos;body=[];for(let i=0;i<n;i++)body.push(r.word());}
+  const r=new Reader(words),profile=r.word();if(![1,2,3].includes(profile))fail('Unsupported Silex version or profile.');
+  let body,n,compressed,bodyStart,definitions=[];
+  if(profile===3){if(r.word()!==1)fail('Unsupported Silex vocabulary version.');const count=r.count(128);for(let i=0;i<count;i++){const key=readString(r),part='nvarxp'[r.word()],definition=readString(r),e={key,part,definition};if(part==='x'){e.result=TYPES[r.word()];e.types=Array.from({length:r.count(32)},()=>TYPES[r.word()]);if(!e.result||e.types.some(t=>!t))fail('Invalid local predicate signature.');}if(!/^local:/u.test(key))fail('Local declarations must use the local namespace.');if(part==='p'){const mask=r.word();e.roles=Object.fromEntries(Array.from({length:6},(_,i)=>i).filter(i=>mask&(1<<i)).map(i=>[i,'ARG'+i]));}resolveLexical({key,lexical:e});definitions.push(e);}if(new Set(definitions.map(e=>e.key)).size!==count)fail('Duplicate local lexical definition.');}
+  if(profile===1||profile===3){n=r.count();bodyStart=r.pos;body=[];for(let i=0;i<n;i++)body.push(r.word());}
   else {const byteCount=r.count(LIMITS.words);n=r.count();compressed=r.bytes(byteCount);}
   const end=r.pos,observed=(r.word()<<6)|r.word();
   if(observed!==crc12(words.slice(0,end)))fail('The image checksum does not match. The image may be damaged.');
@@ -154,7 +180,8 @@ export async function unpacket(words) {
     const bits=Array.from(raw,b=>b.toString(2).padStart(8,'0')).join('');if(/1/.test(bits.slice(6*n)))fail('Nonzero compressed-body padding.');
     body=Array.from({length:n},(_,i)=>parseInt(bits.slice(i*6,i*6+6),2));
   }
-  return {body,profile,bodyStart,packetLength:r.pos,ast:decode(body)};
+  if(profile===3)await loadVocabulary();
+  const ast=decode(body,{profile,definitions});if(profile===3){const used=new Set();function visit(n){if(n.op==='LEX'&&n.lexical)used.add(n.key);n.args.forEach(visit);}visit(ast);if(definitions.some(d=>!used.has(d.key)))fail('Unused lexical declaration.');}return {body,profile,bodyStart,definitions,packetLength:r.pos,ast};
 }
 export function layout(n) {
   let best;

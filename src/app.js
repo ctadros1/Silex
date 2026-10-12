@@ -1,11 +1,12 @@
-import {encode,parse,notation,packet,grid,svg,layout,pngBlob,decodeImage,roles} from './codec.js';
+import {analyze,cancel as cancelMeaning} from './meaning.js';
+import {encode,parse,notation,packet,grid,svg,layout,pngBlob,decodeImage,roles,declarationSpans} from './codec.js';
 import {LANGUAGES,EXAMPLES,knownReading,literalEnglish,explainRecord,preserve,scopeNotes,validateSemantic} from './language.js';
 import * as ai from './ai.js';
-import * as meaning from './meaning.js';
 import {decodeMeaningDocument,literalGraphReading,graphPieceMap,dictionaryGlyphSpan} from './meaning-graph.js';
 import {unpackMeaning} from './lexicon.js';
 import {decodeCompactGraphs,compactPieceMap} from './compact-graph.js';
 import {semanticReading,semanticKnownReading,documentStatements} from './semantic-compiler.js';
+import {resolveLexical,lexicalTypes,loadVocabulary} from './logic-vocabulary.js';
 const $=id=>document.getElementById(id);
 const state={ast:null,cells:null,frame:null,encoded:null,selected:0,page:0,reverse:false,revision:0,busy:false,job:0,modelLoading:false,modelReady:false,lastText:null,sourceLanguage:'en',forwardLanguage:'en'};
 let progressTimer,startedAt=0;
@@ -43,15 +44,15 @@ function count(){$('character-count').textContent=`${$('source-text').value.leng
 function updateExampleLabels(){const language=$('source-language').value;for(const e of EXAMPLES)$('examples').options[e.id+1].textContent=e.text[language]||e.text.en;}
 function showAnalysis(ast,{method='Local decoding',assumptions=[],frame=null,source=null}={}){
   state.ast=ast;state.graph=decodeMeaningDocument(ast)||decodeCompactGraphs(ast);state.graphPieces=state.graph?(state.graph.profile==='g2/1'?compactPieceMap(state.graph):graphPieceMap(state.graph)):new Map();for(const item of documentStatements(ast)||[]){const g=decodeCompactGraphs(item);if(g)for(const [field,piece] of compactPieceMap(g))state.graphPieces.set(field,piece);}state.encoded=encode(ast);state.selected=0;state.page=0;
-  if(frame){state.frame=frame;state.cells=frame.cells;}else{const words=packet(state.encoded.words),l=layout(words.length);state.cells=grid(words,l.cols);state.frame={profile:1,cols:l.cols,rows:l.rows,packetLength:words.length};}
+  if(frame){state.frame=frame;state.cells=frame.cells;}else{const words=packet(state.encoded.words,state.encoded),l=layout(words.length);state.cells=grid(words,l.cols);state.frame={profile:state.encoded.profile,cols:l.cols,rows:l.rows,packetLength:words.length};}
   // Header length is counted from the self-delimiting body-word count.
-  if(!frame){let i=1;const words=packet(state.encoded.words);while(words[i++]>=32){}state.frame.bodyStart=i;}
+  if(!frame){const words=packet(state.encoded.words,state.encoded);state.frame.bodyStart=words.length-state.encoded.words.length-2;}
   $('explanation').hidden=false;$('fallback').hidden=true;
   $('literal-reading').textContent=state.graph?.source?literalGraphReading(state.graph):semanticReading(ast);$('source-reading').textContent=state.graph?.source?'Legacy image: stored source wording — '+state.graph.source:'';
   $('translation-method').textContent=`${method}${method==='On-device AI'?' · Review this interpretation.':''}${source?' · Source: '+source:''}`;
   $('expression').textContent=notation(ast);
   const container=$('assumptions');container.replaceChildren();if(assumptions.length){const list=document.createElement('ul');for(const text of [...new Set(assumptions)]){const li=document.createElement('li');li.textContent=text;list.append(li);}container.append(list);}
-  $('frame-details').textContent=`${state.encoded.words.length} body glyphs (${state.encoded.words.length*6} syntax bits). ${state.cells[0].length} × ${state.cells.length} modules including border, margin, length, checksum, and padding. Profile ${state.frame.profile}. Normal images contain native meaning symbols or a compact semantic graph. Local concept declarations are counted; shared codes use the published codebook. Source words and formatting are excluded.`;
+  $('frame-details').textContent=`${state.encoded.words.length} body cells (${state.encoded.words.length*6} syntax bits). ${state.cells[0].length} × ${state.cells.length} modules including border, margin, length, checksum, declarations, and padding. Profile ${state.frame.profile}. Logical operators and grounded lexical predicates form the expression. A lexical predicate is a compound head with a shared vocabulary index, not the word's UTF-8 spelling. New irreducible meanings pay for a local sense definition. Source words and formatting are excluded.`;
   $('compression-note').textContent=state.frame.profile===2?'This uploaded frame is compressed. Its words are recovered locally before interpretation. Individual heads share compressed bits, so the highlighted pieces appear in a reconstructed direct frame below; they cannot be assigned separate rectangles in the compressed original.':'The highlighted words occupy the exact displayed positions in the complete direct frame. The first words are framing information; the last words are checksum and zero padding.';
   renderGlyphs();renderTree();renderImages();const meaning=unpackMeaning(ast).content;selectPiece(state.encoded.records.find(r=>r.kind==='head'&&r.node===meaning)?.index||0);
   for(const id of ['download-png','copy-image','download-svg','copy-text'])$(id).disabled=false;
@@ -60,12 +61,12 @@ function renderImages(){
   if(!state.cells)return;let unit=Number($('image-scale').value);while(state.cells.length*state.cells[0].length*unit*unit>8000000&&unit>8){unit=unit===20?12:8;$('image-scale').value=String(unit);}
   if(!state.reverse)$('result-image').innerHTML=svg(state.cells,unit);
   else $('uploaded-image').innerHTML=svg(state.cells,8);
-  $('result-caption').textContent=state.reverse?`Decoded Silex v1 · profile ${state.frame.profile}`:`${state.cells[0].length*unit} × ${state.cells.length*unit} px · ${state.encoded.words.length} body glyphs`;
+  $('result-caption').textContent=state.reverse?`Decoded Silex · profile ${state.frame.profile}`:`${state.cells[0].length*unit} × ${state.cells.length*unit} px · ${state.encoded.words.length} body cells · ${state.encoded.records.filter(r=>r.kind==='head').length} meaning symbols`;
 }
 function glyphSVG(value){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 3" shape-rendering="crispEdges" aria-hidden="true"><rect width="2" height="3" fill="white" stroke="#b9c1ce" stroke-width=".06"/>${Array.from({length:6},(_,i)=>`<rect x="${i%2}" y="${Math.floor(i/2)}" width="1" height="1" fill="${(value>>(5-i))&1?'black':'white'}" stroke="#b9c1ce" stroke-width=".025"/>`).join('')}</svg>`;}
 function renderGlyphs(){
-  const container=$('glyphs');container.replaceChildren();const records=state.encoded.records,start=state.page*24;
-  records.slice(start,start+24).forEach(record=>{const b=document.createElement('button');b.className='glyph';b.setAttribute('aria-pressed',String(record.index===state.selected));b.title=`Glyph ${record.index+1}: ${record.kind==='head'?record.op:record.kind}`;b.setAttribute('aria-label',b.title);b.innerHTML=glyphSVG(record.value)+`<span class="glyph-label">${escaped(record.kind==='head'?record.op:record.kind==='byte count'?'length':record.kind==='literal bytes'?'bytes':record.kind)}</span><small>${record.index+1}</small>`;b.addEventListener('click',()=>selectPiece(record.index));container.append(b);});
+  const container=$('glyphs');container.replaceChildren();const records=state.encoded.records.filter(r=>r.kind==='head'),start=state.page*24;
+  records.slice(start,start+24).forEach(record=>{const b=document.createElement('button');b.className='glyph';b.setAttribute('aria-pressed',String(record.index===state.selected));b.title=`Symbol at cell ${record.index+1}: ${record.op}`;b.setAttribute('aria-label',b.title);const ws=state.encoded.words.slice(record.start,record.codeEnd||record.start+1),picture=ws.length===1?glyphSVG(ws[0]):`<svg viewBox="0 0 ${ws.length*2} 3" shape-rendering="crispEdges" aria-hidden="true">${ws.map((w,x)=>`<g transform="translate(${x*2} 0)">${glyphSVG(w).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')}</g>`).join('')}</svg>`;b.innerHTML=picture+`<span class="glyph-label">${escaped(record.op)}</span><small>cell ${record.index+1}</small>`;b.addEventListener('click',()=>selectPiece(record.index));container.append(b);});
   $('glyph-pagination').hidden=records.length<=24;$('glyph-range').textContent=`${start+1}–${Math.min(start+24,records.length)} of ${records.length}`;$('previous-glyphs').disabled=state.page===0;$('next-glyphs').disabled=start+24>=records.length;
 }
 function renderTree(){
@@ -84,20 +85,20 @@ function renderTree(){
   const tree=$('semantic-tree');tree.replaceChildren();let count=0;const lexicon=new Map(unpackMeaning(state.ast).lexicon.map(e=>[e.id,e]));
   function walk(n,level=0,role='Meaning'){
     if(count++>180)return;const b=document.createElement('button');b.className='tree-row';b.style.paddingLeft=`${5+level*12}px`;
-    const record=state.encoded.records.find(r=>r.kind==='head'&&r.node===n);b.innerHTML=`${escaped(role)}: <strong>${escaped(n.op)}</strong>${n.value!==undefined?' '+escaped(String(n.value).slice(0,50)):''}`;
-    b.addEventListener('click',()=>{if(record)selectPiece(record.index);});tree.append(b);const signature=n.op==='CALL'?lexicon.get(n.args[0]?.value)?.roles:null;n.args.forEach((a,i)=>walk(a,level+1,signature?(i===0?'predicate':signature[i-1]):roles(n.op)[i]||`argument ${i+1}`));
+    const record=state.encoded.records.find(r=>r.kind==='head'&&r.node===n),entry=n.op==='LEX'?resolveLexical(n):null;b.innerHTML=`${escaped(role)}: <strong>${escaped(entry?.label||n.op)}</strong>${n.value!==undefined?' '+escaped(String(n.value).slice(0,50)):''}`;
+    b.addEventListener('click',()=>{if(record)selectPiece(record.index);});tree.append(b);const signature=entry?(entry.part==='p'?n.slots.map(slot=>`ARG${slot}: ${entry.roles[slot]||'semantic argument'}`):entry.part==='v'?['subject','object/content','recipient/complement']:lexicalTypes(entry,n.args.length)):n.op==='CALL'?lexicon.get(n.args[0]?.value)?.roles:null;n.args.forEach((a,i)=>walk(a,level+1,entry?signature[i]:signature?(i===0?'predicate':signature[i-1]):roles(n.op)[i]||`argument ${i+1}`));
   }walk(state.ast);
   if(count>180){const p=document.createElement('p');p.className='subtle';p.textContent='The full structure is preserved in the expression below.';tree.append(p);}
 }
 function selectPiece(index){
-  const r=state.encoded.records.find(r=>r.index===index);if(!r)return;state.selected=index;const page=Math.floor(index/24);if(state.page!==page)state.page=page;renderGlyphs();
+  const r=state.encoded.records.find(r=>r.index===index);if(!r)return;state.selected=index;const page=Math.floor(state.encoded.records.filter(r=>r.kind==='head').findIndex(x=>x.index===index)/24);if(state.page!==page)state.page=page;renderGlyphs();
   let cells=state.cells,cols=state.frame.cols,start=state.frame.bodyStart;
   if(state.frame.profile===2){const p=packet(state.encoded.words);cells=grid(p);cols=layout(p.length).cols;let i=1;while(p[i++]>=32){}start=i;}
-  const piece=state.graphPieces?.get(r.node),ranges=piece?piece.fields.map(f=>state.encoded.records.find(x=>x.kind==='head'&&x.node===f)).filter(Boolean):[r];const dictionary=piece?dictionaryGlyphSpan(state.graph,state.encoded.records,piece.dictionaryIndex):null;if(dictionary)ranges.push(dictionary);const positions=new Set();for(const range of ranges)for(let i=range.start;i<range.end;i++)positions.add(i);const highlights=[];for(const i of positions){const pos=start+i;highlights.push({x:2+2*(pos%cols),y:2+3*Math.floor(pos/cols)});}
+  const piece=state.graphPieces?.get(r.node),ranges=piece?piece.fields.map(f=>state.encoded.records.find(x=>x.kind==='head'&&x.node===f)).filter(Boolean):[r];const dictionary=piece?dictionaryGlyphSpan(state.graph,state.encoded.records,piece.dictionaryIndex):null;if(dictionary)ranges.push(dictionary);const positions=new Set();for(const range of ranges)for(let i=range.start;i<range.end;i++)positions.add(i);const lexicalDeclaration=r.node?.op==='LEX'?declarationSpans(state.encoded).get(r.node.key):null;const highlights=[];if(lexicalDeclaration)for(let pos=lexicalDeclaration.start;pos<lexicalDeclaration.end;pos++)highlights.push({x:2+2*(pos%cols),y:2+3*Math.floor(pos/cols)});for(const i of positions){const pos=start+i;highlights.push({x:2+2*(pos%cols),y:2+3*Math.floor(pos/cols)});}
   $('assembly-image').innerHTML=svg(cells,14,highlights);
   $('piece-label').textContent=piece?piece.title:`Glyph ${r.index+1}: ${r.kind==='head'?r.op:r.kind} · ${r.value.toString(2).padStart(6,'0')}`;
-  const definition=r.node?.op==='CALL'?unpackMeaning(state.ast).lexicon.find(e=>e.id===r.node.args[0]?.value):null;
-  $('piece-description').textContent=piece?piece.description:definition?`${definition.id.split(':').at(-1)} — ${definition.definition} Ordered roles: ${definition.roles.join(', ')}.`:explainRecord(r);$('piece-path').textContent=r.path+(r.kind==='head'&&r.end>r.start+1?` · spans body glyphs ${r.start+1}–${r.end}`:'');
+  const lexical=r.node?.op==='LEX'?resolveLexical(r.node):null,definition=r.node?.op==='CALL'?unpackMeaning(state.ast).lexicon.find(e=>e.id===r.node.args[0]?.value):null;
+  $('piece-description').textContent=piece?piece.description:lexical?`${lexical.key} — ${lexical.definition}. ${lexical.id===null?'Its explicit sense declaration is counted in this frame.':'Its grounded vocabulary index is encoded as a compound head; no spelling bytes are transmitted.'}`:definition?`${definition.id.split(':').at(-1)} — ${definition.definition} Ordered roles: ${definition.roles.join(', ')}.`:explainRecord(r);$('piece-path').textContent=r.path+(r.kind==='head'&&r.end>r.start+1?` · spans body cells ${r.start+1}–${r.end}`:'');
 }
 async function translate(){
   if(state.busy)return;const source=$('source-language').value;
@@ -106,7 +107,7 @@ async function translate(){
   invalidate();const revision=state.revision,job=++state.job;busy(true);message('Interpreting the sentence locally…');
   try{
     let analysis;
-    if(source==='expression'){const ast=parse(text);validateSemantic(ast);analysis={ast,method:'Silex expression',assumptions:scopeNotes(ast)};}
+    if(source==='expression'){if(text.includes('@'))await loadVocabulary();const ast=parse(text);validateSemantic(ast);analysis={ast,method:'Silex expression',assumptions:scopeNotes(ast)};}
     else{
       let english=text;
       if(source!=='en'){
@@ -115,13 +116,14 @@ async function translate(){
         english=await ai.translateText(text,source,'en',modelActivity);
       }
       if(revision!==state.revision)return;
-      analysis=await meaning.analyze(english,'en',report=>{if(job===state.job&&revision===state.revision){message(report.stage);$('translation-detail').textContent=report.detail;state.progressDetail=true;}});
+      analysis=await analyze(english,'en',report=>{if(job===state.job&&revision===state.revision){message(report.stage);$('translation-detail').textContent=report.detail;state.progressDetail=true;}});
       if(source!=='en')analysis.assumptions.unshift('The meaning parser analyzed this local English translation: '+english);
     }
     if(revision!==state.revision||job!==state.job)return;
+    if(ai.isReady()&&!state.modelReady){state.modelReady=true;$('load-model').hidden=true;$('unload-model').hidden=false;$('model-status').textContent='On-device AI is ready.';}
     showAnalysis(analysis.ast,analysis);state.lastText=text;
     message(analysis.ast.op==='TEXT'?'Exact wording preserved. This is a text literal, not a formal semantic translation.':analysis.method==='On-device AI'?'Translated on your device. Review the literal reading before sharing.':'Translated locally. Select a glyph below to inspect it.');
-  }catch(e){if(revision===state.revision&&job===state.job){message(e.message,true);if(source!=='expression'){$('fallback-message').textContent='Automatic interpretation failed. Exact wording can be preserved as a separate text literal.';$('fallback').hidden=false;}}}
+  }catch(e){if(revision===state.revision&&job===state.job){message(e?.message|| (typeof e==='string'?e:JSON.stringify(e)) || 'The local model could not complete this interpretation.',true);if(source!=='expression'){$('fallback-message').textContent='Automatic interpretation failed. Exact wording can be preserved as a separate text literal.';$('fallback').hidden=false;}}}
   finally{if(job===state.job)busy(false);}
 }
 async function reverseReading(){
@@ -135,7 +137,7 @@ async function reverseReading(){
     if(result){$('result-text').textContent=result;$('copy-text').disabled=false;message(generated?'Translated on your device. Review the English literal reading below.':graph&&target===graph.language?'Image decoded locally. Exact source words recovered; inspect the meaning graph below.':semanticKnownReading(ast,target)?'Meaning decoded and translated locally. Original wording is not stored.':'Image decoded locally. This is the structural English reading; enable AI for a natural sentence.');}
     else if(ast.op==='TEXT'){$('result-text').textContent=ast.value;$('copy-text').disabled=false;message('Exact wording recovered. Enable on-device AI to translate it into the selected language.');}
     else{$('result-text').textContent='Enable on-device AI to translate this meaning into '+(LANGUAGES.find(l=>l.code===target)?.name||target)+'.';message('The image is decoded. Its complete literal reading is shown below.');}
-  }catch(e){if(job===state.job)message(e.message,true);}finally{if(job===state.job)busy(false);}
+  }catch(e){if(job===state.job)message(e?.message|| (typeof e==='string'?e:JSON.stringify(e)) || 'The local model could not complete this interpretation.',true);}finally{if(job===state.job)busy(false);}
 }
 async function acceptImage(file){
   if(!file||state.busy)return;invalidate();const revision=state.revision;busy(true);message('Decoding image pixels on your device…');
@@ -143,7 +145,7 @@ async function acceptImage(file){
     const frame=await decodeImage(file);if(revision!==state.revision)return;
     showAnalysis(frame.ast,{frame,method:'Local image decoding',assumptions:scopeNotes(frame.ast)});$('dropzone').hidden=true;$('upload-preview').hidden=false;$('upload-name').textContent=file.name||'Pasted image';
     busy(false);await reverseReading();
-  }catch(e){if(revision===state.revision){message(e.message,true);$('dropzone').hidden=false;$('upload-preview').hidden=true;}}finally{busy(false);}
+  }catch(e){if(revision===state.revision){message(e?.message|| (typeof e==='string'?e:JSON.stringify(e)) || 'The local model could not complete this interpretation.',true);$('dropzone').hidden=false;$('upload-preview').hidden=true;}}finally{busy(false);}
 }
 async function swap(){
   if(state.busy)return;
@@ -151,15 +153,15 @@ async function swap(){
   else{const cells=state.cells;state.revision++;$('source-language').value='silex';$('target-language').value=state.forwardLanguage;syncMode();if(cells){const blob=await pngBlob(cells,Number($('image-scale').value));await acceptImage(new File([blob],'silex.png',{type:'image/png'}));}else{invalidate();message('Choose a Silex image to decode.');}}
 }
 function download(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),15000);}
-function localAction(fn){return async()=>{try{await fn();}catch(e){message(e.message,true);}};}
+function localAction(fn){return async()=>{try{await fn();}catch(e){message(e?.message|| (typeof e==='string'?e:JSON.stringify(e)) || 'The local model could not complete this interpretation.',true);}};}
 $('translate').addEventListener('click',translate);
-$('stop').addEventListener('click',()=>{ai.cancelGeneration();meaning.cancel();state.cancelReason='stop';state.revision++;$('stop').disabled=true;message('Stopping translation…');});
+$('stop').addEventListener('click',()=>{ai.cancelGeneration();cancelMeaning();if(state.modelLoading)ai.unloadModel().catch(()=>{});state.cancelReason='stop';state.revision++;$('stop').disabled=true;message('Stopping translation…');});
 $('swap').addEventListener('click',localAction(swap));
-$('source-text').addEventListener('input',()=>{if(state.busy){ai.cancelGeneration();meaning.cancel();state.cancelReason='edit';}invalidate();count();message(state.busy?'Text changed. Stopping the previous translation…':'Press Translate when your sentence is ready.');});
+$('source-text').addEventListener('input',()=>{if(state.busy){ai.cancelGeneration();cancelMeaning();if(state.modelLoading)ai.unloadModel().catch(()=>{});state.cancelReason='edit';}invalidate();count();message(state.busy?'Text changed. Stopping the previous translation…':'Press Translate when your sentence is ready.');});
 $('source-text').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();translate();}});
 $('source-language').addEventListener('change',()=>{
   const prev=state.sourceLanguage,source=$('source-language').value,previous=EXAMPLES.find(e=>e.text[prev]===$('source-text').value);
-  state.sourceLanguage=source;state.job++;busy(false);ai.cancelGeneration();meaning.cancel();invalidate();syncMode();updateExampleLabels();
+  state.sourceLanguage=source;state.job++;busy(false);ai.cancelGeneration();cancelMeaning();invalidate();syncMode();updateExampleLabels();
   if(LANGUAGES.some(l=>l.code===source))state.forwardLanguage=source;
   if(source==='expression')$('source-text').value='(SEE ME YOU)';else if(previous&&previous.text[source])$('source-text').value=previous.text[source];count();message(source==='silex'?'Choose a Silex image to decode.':'Press Translate to use the selected language.');
 });
@@ -182,8 +184,8 @@ $('load-model').addEventListener('click',localAction(async()=>{
   if(state.modelLoading){await ai.unloadModel();return;}
   state.modelLoading=true;$('load-model').textContent='Cancel download';$('model-progress').hidden=false;$('model-status').textContent='Checking GPU and downloading model files…';
   try{await ai.loadModel(report=>{$('model-progress').value=report.progress;$('model-status').textContent=report.text;});state.modelReady=true;$('load-model').hidden=true;$('unload-model').hidden=false;$('model-status').textContent='On-device AI is ready. Review its literal readings before sharing.';message('On-device AI enabled. Press Translate to interpret your sentence.');}
-  catch(e){$('model-status').textContent=e.message;message(e.message,true);}
+  catch(e){$('model-status').textContent=e.message;message(e?.message|| (typeof e==='string'?e:JSON.stringify(e)) || 'The local model could not complete this interpretation.',true);}
   finally{state.modelLoading=false;$('model-progress').hidden=true;$('load-model').textContent='Download model (~2.4 GB)';}
 }));
 $('unload-model').addEventListener('click',localAction(async()=>{if(state.busy)throw new Error('Stop the current translation before turning off AI.');await ai.unloadModel();state.modelReady=false;$('load-model').hidden=false;$('unload-model').hidden=true;$('model-status').textContent='AI is off. Cached model files remain on this device.';message('On-device AI turned off.');}));
-syncMode();updateExampleLabels();invalidate();message('Press Translate. The meaning model downloads on first use (about 270 MB), then runs locally.');
+syncMode();updateExampleLabels();invalidate();message('Press Translate. English uses a local meaning model (~270 MB once) and a shared vocabulary (~18.4 MB). Sentences and images stay on this device.');

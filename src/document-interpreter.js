@@ -7,7 +7,7 @@ export async function interpretStatements(sources,tagged,generate,onStage=()=>{}
   for(let i=0;i<sources.length;i++){
     const key=sources[i].trim(),cached=cache.has(key);onStage({index:i,total:sources.length,cached});
     const graph=cached?cache.get(key):parseAmrSerial(await generate(key,i));cache.set(key,graph);
-    parts.push({graph,features:semanticFeatures(graph,tagged[i]),source:sources[i]});
+    parts.push({graph,features:semanticFeatures(graph,tagged[i]),source:sources[i],tokens:tagged[i]});
   }
   return parts;
 }

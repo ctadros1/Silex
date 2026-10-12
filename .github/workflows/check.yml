@@ -17,5 +17,5 @@ jobs:
           ONNXRUNTIME_NODE_INSTALL: skip
       - run: npm test
       - run: node scripts/prepare-model.mjs --native
-      - run: node scripts/check-meaning-model.mjs
+      - run: node scripts/check-scoped-model.mjs
       - run: npm run build

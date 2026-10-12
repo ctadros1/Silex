@@ -1,5 +1,7 @@
 # Legacy graph-and-source images
 
+This document describes an older image format, retained for decoding compatibility. Current normal translations use [scoped compilation and lexical profile 3](Scoped-Compilation.md). Measurements below apply to the older pipeline.
+
 This historical format remains decodable. Normal translation no longer generates it: it copied source wording and verbose metadata, which defeated semantic compression. See [Semantic Compression](Semantic-Compression.md) for the current format.
 
 # Silex meaning graphs, version 1

@@ -1,0 +1,576 @@
+{
+  "date": "2026-10-12",
+  "inference": "Fresh native ONNX CPU model execution, followed by the production scoped compiler",
+  "inputs": 40,
+  "passed": 40,
+  "failures": [],
+  "oldTotalModules": 36628,
+  "newTotalModules": 14340,
+  "areaReduction": 0.608496232390521,
+  "results": [
+    {
+      "source": "I see the red bird flying across the sky.",
+      "expression": "(SEE ME (@EVENT (LET (THE (AND (BIRD V0) (RED V0))) (@ONGOING (AND (@pb:fly-01/1 V0) (LET (THE (@sky.n.01 V0)) (@ACROSS V1 V0)))))))",
+      "bodyCells": 32,
+      "oldBodyCells": 119,
+      "modules": 380,
+      "oldModules": 992,
+      "coverage": [
+        {
+          "concepts": 7,
+          "relations": 6
+        }
+      ]
+    },
+    {
+      "source": "I see the red bird flying away.",
+      "expression": "(SEE ME (@EVENT (LET (THE (AND (BIRD V0) (RED V0))) (@ONGOING (AND (@pb:fly-01/1 V0) (@AWAY V0))))))",
+      "bodyCells": 25,
+      "oldBodyCells": 98,
+      "modules": 320,
+      "oldModules": 840,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "I see you walking down the street.",
+      "expression": "(SEE ME (@EVENT (LET (THE (@street.n.01 V0)) (@ONGOING (AND (@pb:walk-01/5 YOU V0) (@DOWN YOU V0))))))",
+      "bodyCells": 26,
+      "oldBodyCells": 111,
+      "modules": 320,
+      "oldModules": 930,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "I see the red bird. I see the red bird.",
+      "expression": "(LET (SEE ME (THE (AND (BIRD V0) (RED V0)))) (PAIR V0 (PAIR V0 NIL)))",
+      "bodyCells": 14,
+      "oldBodyCells": 14,
+      "modules": 208,
+      "oldModules": 208,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        },
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "The chef chopped an onion.",
+      "expression": "(LET (THE (@chef.n.01 V0)) (SOME (@onion.n.01 V0) (PAST (@pb:chop-01/3 V1 V0))))",
+      "bodyCells": 24,
+      "oldBodyCells": 88,
+      "modules": 304,
+      "oldModules": 784,
+      "coverage": [
+        {
+          "concepts": 3,
+          "relations": 2
+        }
+      ]
+    },
+    {
+      "source": "The dog chased the cat.",
+      "expression": "(LET (THE (@dog.n.01 V0)) (LET (THE (@cat.n.01 V0)) (PAST (@pb:chase-01/3 V1 V0))))",
+      "bodyCells": 23,
+      "oldBodyCells": 84,
+      "modules": 304,
+      "oldModules": 744,
+      "coverage": [
+        {
+          "concepts": 3,
+          "relations": 2
+        }
+      ]
+    },
+    {
+      "source": "Every student reads a book.",
+      "expression": "(ALL (AND (PERSON V0) (@student.n.01 V0)) (SOME (BOOK V0) (READ V1 V0)))",
+      "bodyCells": 14,
+      "oldBodyCells": 83,
+      "modules": 224,
+      "oldModules": 728,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "The red bird is flying across the sky.",
+      "expression": "(LET (THE (AND (BIRD V0) (RED V0))) (@ONGOING (AND (@pb:fly-01/1 V0) (LET (THE (@sky.n.01 V0)) (@ACROSS V1 V0)))))",
+      "bodyCells": 27,
+      "oldBodyCells": 103,
+      "modules": 338,
+      "oldModules": 868,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "I believe that she did not leave.",
+      "expression": "(BELIEVE ME (PAST (NOT (@pb:leave-11/1 (@SHE)))))",
+      "bodyCells": 12,
+      "oldBodyCells": 87,
+      "modules": 208,
+      "oldModules": 784,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "If the machine fails, the engineer will repair it.",
+      "expression": "(LET (THE (AND (PERSON V0) (@engineer.n.01 V0))) (LET (THE (MACHINE V0)) (IF (FAIL V0) (FUTURE (@pb:repair-01/3 V1 V0)))))",
+      "bodyCells": 26,
+      "oldBodyCells": 116,
+      "modules": 320,
+      "oldModules": 962,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "Alice gave Bob three books.",
+      "expression": "(LET (THE (AND (PERSON V0) (@NAMED V0 \"Alice\"))) (SOME (AND (AND (BOOK V0) (@COUNT V0 3)) (@PLURAL V0)) (LET (THE (AND (PERSON V0) (@NAMED V0 \"Bob\"))) (PAST (GIVE V2 V1 V0)))))",
+      "bodyCells": 49,
+      "oldBodyCells": 108,
+      "modules": 500,
+      "oldModules": 924,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 8
+        }
+      ]
+    },
+    {
+      "source": "The report that Maria wrote surprised me.",
+      "expression": "(LET (THE (AND (@report.n.01 V0) (LET (THE (AND (PERSON V0) (@NAMED V0 \"Maria\"))) (PAST (@pb:write-01/3 V0 V1))))) (PAST (@pb:surprise-01/3 V0 ME)))",
+      "bodyCells": 42,
+      "oldBodyCells": 138,
+      "modules": 450,
+      "oldModules": 1110,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 6
+        }
+      ]
+    },
+    {
+      "source": "Which child saw the fox?",
+      "expression": "(ASK (LAM (AND (CHILD V0) (LET (THE (@fox.n.01 V0)) (PAST (SEE V1 V0))))))",
+      "bodyCells": 16,
+      "oldBodyCells": 69,
+      "modules": 256,
+      "oldModules": 646,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "Did you see the bird flying away?",
+      "expression": "(ASK (PAST (SEE YOU (@EVENT (LET (THE (BIRD V0)) (@ONGOING (AND (@pb:fly-01/1 V0) (@AWAY V0))))))))",
+      "bodyCells": 24,
+      "oldBodyCells": 102,
+      "modules": 304,
+      "oldModules": 868,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "Although it was raining, we walked to the station.",
+      "expression": "(LET (THE (@station.n.01 V0)) (@DESPITE (PAST (@pb:walk-01/5 (@WE) V0)) (PAST (@ONGOING (@pb:rain-01/0)))))",
+      "bodyCells": 29,
+      "oldBodyCells": 110,
+      "modules": 342,
+      "oldModules": 930,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "The telescope was repaired by the engineer.",
+      "expression": "(LET (THE (AND (PERSON V0) (@engineer.n.01 V0))) (LET (THE (@telescope.n.01 V0)) (PAST (@pb:repair-01/3 V1 V0))))",
+      "bodyCells": 27,
+      "oldBodyCells": 112,
+      "modules": 338,
+      "oldModules": 930,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "She has been swimming quietly.",
+      "expression": "(@PERFECT (@ONGOING (AND (@pb:swim-01/1 (@SHE)) (@pb:quiet-04/2 (@EVENT (@pb:swim-01/1 (@SHE)))))))",
+      "bodyCells": 30,
+      "oldBodyCells": 85,
+      "modules": 352,
+      "oldModules": 744,
+      "coverage": [
+        {
+          "concepts": 3,
+          "relations": 2
+        }
+      ]
+    },
+    {
+      "source": "Before noon, the train will arrive.",
+      "expression": "(LET (THE (@train.n.01 V0)) (FUTURE (AND (@pb:arrive-01/2 V0) (SOME (@noon.n.01 V0) (@R_time (@EVENT (@pb:arrive-01/2 V1)) (@REGION (LAM (@BEFORE_TIME V0 V1))))))))",
+      "bodyCells": 44,
+      "oldBodyCells": 108,
+      "modules": 480,
+      "oldModules": 924,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "Everyone who owns a dog loves it.",
+      "expression": "(ALL (AND (PERSON V0) (SOME (@dog.n.01 V0) (@pb:own-01/3 V1 V0))) (LOVE V0 (@IT)))",
+      "bodyCells": 22,
+      "oldBodyCells": 104,
+      "modules": 288,
+      "oldModules": 884,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "The child walks along the river.",
+      "expression": "(LET (THE (CHILD V0)) (LET (THE (@river.n.01 V0)) (@pb:walk-01/5 V1 (@REGION (LAM (@ALONG V0 V1))))))",
+      "bodyCells": 26,
+      "oldBodyCells": 95,
+      "modules": 320,
+      "oldModules": 816,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "She watches the cat jumping out of the window.",
+      "expression": "(@pb:watch-01/3 (@SHE) (@EVENT (LET (THE (@cat.n.01 V0)) (@ONGOING (AND (@pb:jump-03/1 V0) (LET (THE (@window.n.01 V0)) (@OUT_OF V1 V0)))))))",
+      "bodyCells": 39,
+      "oldBodyCells": 145,
+      "modules": 440,
+      "oldModules": 1156,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "The teacher teaches a child.",
+      "expression": "(LET (THE (PERSON V0)) (SOME (CHILD V0) (@pb:teach-01/5 V1 V0)))",
+      "bodyCells": 15,
+      "oldBodyCells": 73,
+      "modules": 234,
+      "oldModules": 660,
+      "coverage": [
+        {
+          "concepts": 3,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "You hear me singing quietly.",
+      "expression": "(@pb:hear-01/3 YOU (@EVENT (@ONGOING (AND (@pb:sing-01/1 ME) (@pb:quiet-04/2 (@EVENT (@pb:sing-01/1 ME)))))))",
+      "bodyCells": 36,
+      "oldBodyCells": 107,
+      "modules": 416,
+      "oldModules": 896,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "No scientist believes that every machine will fail.",
+      "expression": "(NOT (SOME (SCIENTIST V0) (NOT (BELIEVE V0 (ALL (MACHINE V0) (FUTURE (FAIL V0)))))))",
+      "bodyCells": 13,
+      "oldBodyCells": 76,
+      "modules": 208,
+      "oldModules": 682,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "Every engineer who owns a telescope believes that a distant planet may support life.",
+      "expression": "(ALL (AND (AND (PERSON V0) (@engineer.n.01 V0)) (SOME (@telescope.n.01 V0) (@pb:own-01/3 V1 V0))) (BELIEVE V0 (POSSIBLE (SOME (AND (@planet.n.01 V0) (@pb:distant-02/2 V0)) (SOME (@life.n.01 V0) (@pb:support-01/3 V1 V0))))))",
+      "bodyCells": 55,
+      "oldBodyCells": 218,
+      "modules": 550,
+      "oldModules": 1656,
+      "coverage": [
+        {
+          "concepts": 11,
+          "relations": 10
+        }
+      ]
+    },
+    {
+      "source": "Although the engine was repaired, the pilot refused to fly.",
+      "expression": "(LET (THE (AND (PERSON V0) (@pilot.n.01 V0))) (@DESPITE (PAST (@pb:refuse-01/3 V0 (@EVENT (@pb:fly-01/2 V0)))) (LET (THE (@engine.n.01 V0)) (PAST (@pb:repair-01/2 V0)))))",
+      "bodyCells": 46,
+      "oldBodyCells": 155,
+      "modules": 484,
+      "oldModules": 1224,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 6
+        }
+      ]
+    },
+    {
+      "source": "The museum closed because the storm damaged the roof.",
+      "expression": "(@pb:cause-01/3 (@EVENT (LET (THE (@storm.n.01 V0)) (LET (THE (@roof.n.01 V0)) (PAST (@pb:damage-01/3 V1 V0))))) (@EVENT (LET (THE (@museum.n.01 V0)) (PAST (@pb:close-01/2 V0)))))",
+      "bodyCells": 50,
+      "oldBodyCells": 159,
+      "modules": 528,
+      "oldModules": 1258,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "The robot placed the glass under the table.",
+      "expression": "(LET (THE (@automaton.n.02 V0)) (LET (THE (@glass.n.01 V0)) (LET (THE (@table.n.01 V0)) (PAST (@pb:place-01/7 V2 V1 (@REGION (LAM (@UNDER V0 V1))))))))",
+      "bodyCells": 38,
+      "oldBodyCells": 130,
+      "modules": 418,
+      "oldModules": 1054,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "The scientist compared two theories.",
+      "expression": "(LET (THE (SCIENTIST V0)) (SOME (AND (@theory.n.01 V0) (@COUNT V0 2)) (@pb:compare-01/3 V1 V0)))",
+      "bodyCells": 23,
+      "oldBodyCells": 86,
+      "modules": 304,
+      "oldModules": 750,
+      "coverage": [
+        {
+          "concepts": 3,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "Maria said, \"Do not open the door.\"",
+      "expression": "(LET (THE (AND (PERSON V0) (@NAMED V0 \"Maria\"))) (PAST (SAY V0 (LET (THE (@door.n.01 V0)) (AND (NOT (@pb:open-01/3 YOU V0)) (@R_mode (@EVENT (@pb:open-01/3 YOU V0)) \"imperative\"))))))",
+      "bodyCells": 66,
+      "oldBodyCells": 142,
+      "modules": 646,
+      "oldModules": 1150,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 8
+        }
+      ]
+    },
+    {
+      "source": "Can you help the child?",
+      "expression": "(ASK (POSSIBLE (LET (THE (CHILD V0)) (@pb:help-01/5 YOU V0))))",
+      "bodyCells": 14,
+      "oldBodyCells": 62,
+      "modules": 224,
+      "oldModules": 600,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "The cat sleeps while the dog watches the door.",
+      "expression": "(LET (THE (@cat.n.01 V0)) (@WHEN (@pb:sleep-01/1 V0) (LET (THE (@dog.n.01 V0)) (LET (THE (@door.n.01 V0)) (@pb:watch-01/3 V1 V0)))))",
+      "bodyCells": 38,
+      "oldBodyCells": 123,
+      "modules": 418,
+      "oldModules": 1008,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "A blue butterfly landed beside the flower.",
+      "expression": "(SOME (AND (@butterfly.n.01 V0) (@blue.a.01 V0)) (LET (THE (@flower.n.01 V0)) (PAST (@pb:land-01/6 V1 (@REGION (LAM (@BESIDE V0 V1)))))))",
+      "bodyCells": 35,
+      "oldBodyCells": 132,
+      "modules": 396,
+      "oldModules": 1088,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 4
+        }
+      ]
+    },
+    {
+      "source": "The musician played the piano slowly.",
+      "expression": "(LET (THE (@musician.n.01 V0)) (LET (THE (@piano.n.01 V0)) (PAST (AND (@pb:play-11/5 V1 V0) (@pb:slow-05/2 (@EVENT (@pb:play-11/5 V1 V0)))))))",
+      "bodyCells": 41,
+      "oldBodyCells": 114,
+      "modules": 440,
+      "oldModules": 950,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "We will travel through the forest tomorrow.",
+      "expression": "(LET (THE (@forest.n.01 V0)) (FUTURE (@tomorrow.r.01 (@pb:travel-01/3 (@WE) V0))))",
+      "bodyCells": 20,
+      "oldBodyCells": 108,
+      "modules": 286,
+      "oldModules": 924,
+      "coverage": [
+        {
+          "concepts": 4,
+          "relations": 3
+        }
+      ]
+    },
+    {
+      "source": "The machine may stop if the temperature rises.",
+      "expression": "(@pb:have-condition-91/6 (@EVENT (POSSIBLE (LET (THE (MACHINE V0)) (@pb:stop-01/2 V0)))) (@EVENT (LET (THE (@temperature.n.01 V0)) (@pb:rise-01/2 V0))))",
+      "bodyCells": 37,
+      "oldBodyCells": 126,
+      "modules": 416,
+      "oldModules": 1036,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "The mechanic repaired the engine and tested it.",
+      "expression": "(LET (THE (@machinist.n.01 V0)) (LET (THE (@engine.n.01 V0)) (AND (PAST (@pb:repair-01/3 V1 V0)) (PAST (@pb:test-01/3 V1 V0)))))",
+      "bodyCells": 33,
+      "oldBodyCells": 142,
+      "modules": 380,
+      "oldModules": 1150,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 6
+        }
+      ]
+    },
+    {
+      "source": "The artist painted a picture that surprised the visitors.",
+      "expression": "(LET (THE (@artist.n.01 V0)) (SOME (AND (@picture.n.01 V0) (LET (THE (AND (AND (PERSON V0) (@visitor.n.01 V0)) (@PLURAL V0))) (PAST (@pb:surprise-01/3 V1 V0)))) (PAST (@pb:paint-02/3 V1 V0))))",
+      "bodyCells": 46,
+      "oldBodyCells": 157,
+      "modules": 484,
+      "oldModules": 1240,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "I remember the book you gave me.",
+      "expression": "(LET (THE (AND (BOOK V0) (PAST (GIVE YOU V0 ME)))) (REMEMBER ME V0))",
+      "bodyCells": 13,
+      "oldBodyCells": 70,
+      "modules": 208,
+      "oldModules": 646,
+      "coverage": [
+        {
+          "concepts": 5,
+          "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "Some students read every book.",
+      "expression": "(SOME (AND (AND (AND (PERSON V0) (@student.n.01 V0)) (@some.a.01 V0)) (@PLURAL V0)) (ALL (BOOK V0) (PAST (READ V1 V0))))",
+      "bodyCells": 24,
+      "oldBodyCells": 104,
+      "modules": 304,
+      "oldModules": 884,
+      "coverage": [
+        {
+          "concepts": 6,
+          "relations": 5
+        }
+      ]
+    }
+  ]
+}

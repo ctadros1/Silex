@@ -1,5 +1,7 @@
 # Converter verification
 
+The current converter uses [scoped compilation and lexical profile 3](Scoped-Compilation.md). The section below records historical verification of the older graph-record pipeline. Current release evidence is in [Scoped Verification](Scoped-Verification.md).
+
 Evidence recorded on 2026-10-12. Unit tests, native model execution, visual area measurements, browser inference, and deployed files are separate checks. None proves universal interpretation accuracy.
 
 ## Current encoding and compatibility checks

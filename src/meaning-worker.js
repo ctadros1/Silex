@@ -14,7 +14,8 @@ async function initialize(){
     const totalBytes=expected.reduce((n,name)=>n+manifest.files[name].bytes,0);
     loadAssets=createAssetLoader(base,manifest,p=>progress({stage:'Loading the meaning model on this device…',detail:`${(p.completed/1000000).toFixed(1)} of ${(totalBytes/1000000).toFixed(1)} MB checked${p.completed>=totalBytes?' · Starting the local parser…':''}`,download:{...p,totalBytes}}));
     env.allowRemoteModels=false;env.allowLocalModels=true;env.localModelPath=new URL('../models/',import.meta.url).href;
-    env.backends.onnx.wasm.numThreads=1;
+    env.backends.onnx.wasm.numThreads=self.crossOriginIsolated?Math.min(4,Math.max(1,(navigator.hardwareConcurrency||2)-1)):1;
+    console.info(`Silex meaning parser: ${env.backends.onnx.wasm.numThreads} CPU threads.`);
     env.backends.onnx.wasm.wasmBinary=await loadAssets('ort-wasm-simd-threaded.jsep.wasm');
     env.backends.onnx.wasm.wasmPaths={mjs:new URL('ort-wasm-simd-threaded.jsep.mjs',base).href};
     env.fetch=async (input,options)=>{

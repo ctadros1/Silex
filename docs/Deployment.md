@@ -1,8 +1,6 @@
 # Deployment
 
-The converter is a separate static-assets Cloudflare Worker named `silex-converter`. Its single route is `project.christiantadros.com/silex-converter*`, on the `christiantadros.com` zone. Assets live at `dist/silex-converter/`, preserving the prefix for scripts, workers, styles, and reference files. HTML handling redirects the bare path to its trailing-slash directory; the canonical identifies the requested base path.
-
-The project subdomain is already a Custom Domain for SortLab. Worker routes take priority for matching paths; the Silex route leaves `/sortlab/` and the root redirect alone. No DNS record, hostname ownership, redirect rule, personal-site source, CMS binding, or existing Worker is replaced.
+The converter is a static-assets Cloudflare Worker named `silex-converter`. Its single route is `project.christiantadros.com/silex-converter*`, on the `christiantadros.com` zone. Assets live at `dist/silex-converter/`, preserving the prefix for scripts, workers, styles, and reference files. HTML handling redirects the bare path to its trailing-slash directory; the canonical identifies the requested base path.
 
 There are no runtime bindings, secrets, databases, buckets, upload handlers, or inference endpoints. Caching of model files occurs in the browser. The default hosting limits/plan still apply to static assets; this design creates no server storage for visitors' images.
 

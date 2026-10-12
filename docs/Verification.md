@@ -20,22 +20,22 @@ Evidence recorded on 2026-10-12. Unit tests, provider deployment, and rendered b
 
 ## Browser evidence
 
-Chrome was used through the documented computer-use browser controls. Browser scripts were not injected to call the hidden application or model state. Model files were fetched from their pinned upstream revisions.
+The interface was tested in Chrome. Model files were fetched from their pinned upstream revisions.
 
 | Input or action | Observed result |
 |---|---|
 | “I see you walking down the street.” | Compiles without AI. The encoded event is ongoing walking by YOU, along the unique street; ME sees YOU and that event. |
 | “The engineer repairs the telescope.” | On-device vocabulary definitions plus deterministic scope compilation. Engineer is actor, telescope is object. |
-| “Every engineer who owns a telescope believes that a distant planet may support life.” | Nested relative restriction, existential telescope, engineer-bound belief, and possibility are preserved. Sense selection still needs review; the earlier support definition was too broad. |
+| “Every engineer who owns a telescope believes that a distant planet may support life.” | Nested relative restriction, existential telescope, engineer-bound belief, and possibility are preserved. Word-sense selection still needs review; a structurally valid translation can use an overly broad definition. |
 | “Although the engine was repaired, the pilot refused to fly.” | Compiles after correcting the fly signature: an unnamed repair actor, both past clauses, concession, refusal, and unasserted flight content are preserved. |
 | Copy PNG, select Silex image, paste with Cmd+V | The actual clipboard PNG is decoded from pixels in the browser and recovers “I see the red bird.” |
 | “I am happy.” → image → English | Recovers “I am happy.” through local decoding and on-device realization. |
 | Same happy image → Spanish | Produces “Estoy experimentando placer o satisfacción.” The output preserves the supplied sense, though another phrasing could be more idiomatic. |
 | Download generated paid-lexicon PNG | The original Python reference decoder independently recovers its exact lexical package and content. |
 
-File chooser automation was blocked by the browser extension's file-URL access setting. No browser permission was expanded. Ordinary visitors do not require that extension. The clipboard-paste workflow exercises the same File-to-pixel decoder without that automation restriction.
+Raster decoding was tested through actual clipboard PNG imports. The file-picker workflow was not automated in this run.
 
-The earlier tiny-model formal-token generator repeatedly failed ordinary sentences. It was replaced with a stronger Qwen3.5 4B local model, word-sense assistance, a broader grammar compiler, named bindings, and a nested meaning-tree intermediate. The model is still fallible: grammar compilation and an omission guard do not prove source/translation equivalence. Exact text remains a clearly separate mode.
+The converter uses Qwen3.5 4B for word-sense assistance and meaning-tree interpretation. Grammar compilation and omission checks do not prove source/translation equivalence. Exact text is a separate mode.
 
 ## Visual comparison
 
@@ -53,4 +53,4 @@ A 375 × 812 mobile viewport is checked for horizontal overflow and legible stac
 
 ## Release evidence
 
-Cloudflare deployed the isolated static Worker to `project.christiantadros.com/silex-converter*`, version `ad9aca56-cfbf-4042-9718-92e97f1b566f`, without runtime bindings. The canonical page serves the expected HTML and security headers. Additional live/browser evidence and screenshots accompany this release. The public repository contains the language specification, research report and records, reference codec, converter code, tests, and a build/test workflow. It does not contain model weights, private keys, or visitor data.
+The live converter serves the expected HTML, application assets and security headers. Its static server rejects an empty POST with HTTP 405. The browser performs image decoding and inference locally. The public repository contains the language specification, research report and records, reference codec, converter code, tests, and a build/test workflow. It does not contain model weights, private keys, or visitor data.

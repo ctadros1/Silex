@@ -68,7 +68,7 @@ The actual TEXT is length-delimited UTF-8 JSON and the CALL has a counted argume
 - No upload endpoint, user account, analytics, R2 bucket, D1 database, or server image storage is used.
 - Model downloads contact Hugging Face and GitHub. These hosts see ordinary model-file download requests; sentence text and images are not sent to them by this app.
 - Model caching consumes storage on the visitor's device. Turning off AI releases its runtime but keeps those cached files.
-- The page is served by a static-assets Cloudflare Worker with one route, `project.christiantadros.com/silex-converter*`. The existing project-subdomain root redirect and SortLab custom domain are preserved.
+- The app is hosted as static files. The server does not process translations or store uploaded images.
 
 Upload an intact PNG, lossless WebP, or sufficiently crisp JPEG panel, including its white margin. Integer scales and rotations are supported. Photos, cropped panels, captions, blur, and noninteger resampling may fail safely. Clipboard image support depends on browser permissions; PNG download is the fallback. Exported SVGs can be rasterized, but uploaded SVG is intentionally not accepted because raster files cannot contain linked remote assets.
 

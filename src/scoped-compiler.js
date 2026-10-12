@@ -41,7 +41,7 @@ export function compileScopedGraph(graph,features={flags:[],notes:[]},definition
   if(features.nominals?.[id]&&!out(id).length)return predicate(features.nominals[id],[subject]);
   if(/-\d\d$/.test(concept))return proposition(id,env,{subject,slot});
   const terms=[predicate(concept,[subject],[],'a')];
-  for(const e of out(id)){consumed.add(e);if(e.role==='polarity'&&e.target.value==='-'){terms[0]=p('NOT',terms[0]);continue;}terms.push(value(e.target,env,t=>lex('R_'+e.role,subject,t)));}
+  for(const e of out(id)){if(consumed.has(e))continue;consumed.add(e);if(/^ARG[0-5]-of$/.test(e.role)&&e.target.kind==='node'){terms.push(property(e.target.id,subject,env,Number(e.role[3])));continue;}if(e.role==='mod'&&e.target.kind==='node'){terms.push(property(e.target.id,subject,env));continue;}if(e.role==='polarity'&&e.target.value==='-'){terms[0]=p('NOT',terms[0]);continue;}terms.push(value(e.target,env,t=>lex('R_'+e.role,subject,t)));}
   return conjunction(terms);
  }
  function restriction(id,name,env){

@@ -1,12 +1,12 @@
 {
   "date": "2026-10-12",
   "inference": "Fresh native ONNX CPU model execution, followed by the production scoped compiler",
-  "inputs": 40,
-  "passed": 40,
+  "inputs": 42,
+  "passed": 42,
   "failures": [],
-  "oldTotalModules": 36628,
-  "newTotalModules": 14340,
-  "areaReduction": 0.608496232390521,
+  "oldTotalModules": 37900,
+  "newTotalModules": 14730,
+  "areaReduction": 0.6113456464379947,
   "results": [
     {
       "source": "I see the red bird flying across the sky.",
@@ -569,6 +569,34 @@
         {
           "concepts": 6,
           "relations": 5
+        }
+      ]
+    },
+    {
+      "source": "She was happy.",
+      "expression": "(PAST (@pb:happy-01/2 (@SHE)))",
+      "bodyCells": 9,
+      "oldBodyCells": 63,
+      "modules": 182,
+      "oldModules": 600,
+      "coverage": [
+        {
+          "concepts": 2,
+          "relations": 1
+        }
+      ]
+    },
+    {
+      "source": "She was an engineer.",
+      "expression": "(PAST (AND (PERSON (@SHE)) (@engineer.n.01 (@SHE))))",
+      "bodyCells": 11,
+      "oldBodyCells": 75,
+      "modules": 208,
+      "oldModules": 672,
+      "coverage": [
+        {
+          "concepts": 3,
+          "relations": 2
         }
       ]
     }

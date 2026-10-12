@@ -20,11 +20,11 @@ export function semanticFeatures(graph,tokens=[]){
   for(const t of tokens){
     const id=align(t);if(id===null)continue;
     order[id]=t.id;
-    if(['VERB','AUX'].includes(t.pos)){
+    if(['VERB','AUX'].includes(t.pos)||tokens.some(a=>a.head===t.id&&a.relation==='cop')){
       if(t.features.Tense==='Past'&&t.features.VerbForm==='Fin')flags[id]|=FEATURES.PAST;
       // A learned tagger can label an irregular past form as an infinitive.
       // Repair only an inflected, non-s/non-ing lexical verb without a real auxiliary.
-      const auxiliaries=tokens.filter(a=>a.head===t.id&&a.relation.startsWith('aux')&&['be','have','do','will','shall','can','may','must','should','would','could','might'].includes(a.lemma));
+      const auxiliaries=tokens.filter(a=>a.head===t.id&&(a.relation.startsWith('aux')||a.relation==='cop')&&['be','have','do','will','shall','can','may','must','should','would','could','might'].includes(a.lemma));
       if(t.pos==='VERB'&&t.features.VerbForm==='Inf'&&t.form.toLowerCase()!==t.lemma&&!/(s|ing)$/.test(t.form.toLowerCase())&&!auxiliaries.length)flags[id]|=FEATURES.PAST;
       if(t.features.VerbForm==='Ger'||t.features.VerbForm==='Part'&&t.features.Tense==='Pres')flags[id]|=FEATURES.ONGOING;
       for(const aux of auxiliaries){

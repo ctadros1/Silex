@@ -14,7 +14,7 @@ Those 42 inputs reduced summed complete direct-frame area by **61.13%** against 
 | Input | Previous body cells | Current body cells | Previous panel modules | Current panel modules |
 |---|---:|---:|---:|---:|
 | I see the red bird flying across the sky. | 119 | 32 | 992 | 380 |
-| I see the red bird flying away. | 98 | 25 | 842 | 320 |
+| I see the red bird flying away. | 98 | 25 | 840 | 320 |
 | I see you walking down the street. | 111 | 26 | 930 | 320 |
 | I see the red bird. I see the red bird. | 14 | 14 | 208 | 208 |
 
